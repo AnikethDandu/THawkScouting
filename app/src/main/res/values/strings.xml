@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">THawkScouting2020</string>
+    <string name="tab_text_1">Autonomous</string>
+    <string name="tab_text_2">Tele-Op</string>
+    <string name="tab_text_3">Endgame</string>
+    <string name="high">High</string>
+    <string name="low">Low</string>
+    <string name="outer">Outer</string>
+    <string name="inner">Inner</string>
+    <string name="bottom">bottom</string>
+    <string name="team_hint">Team</string>
+    <string name="match_hint">Match</string>
+    <string name="hit">hit</string>
+    <string name="miss">miss</string>
+    <string name="blue">blue</string>
+    <string name="red">red</string>
+</resources>
