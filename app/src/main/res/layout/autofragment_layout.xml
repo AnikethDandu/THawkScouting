@@ -304,12 +304,12 @@
         android:id="@+id/autoUndoButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Undo Previous Action"
+        android:onClick="onClick"
+        android:text="@string/auto_undo"
         app:layout_constraintBottom_toTopOf="@+id/bottomHorizontal"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline20"
-        android:onClick="onClick"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline20" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline21"

@@ -18,6 +18,8 @@ import android.widget.ToggleButton;
 import android.widget.EditText;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class AutoFragment extends Fragment {
 
     private int[] powerCellHit = {0, 0, 0};
@@ -32,7 +34,6 @@ public class AutoFragment extends Fragment {
         return inflater.inflate(R.layout.autofragment_layout, container, false);
     }
 
-    @SuppressLint("DefaultLocale")
     @Override
     public void onResume() {
         super.onResume();
@@ -49,6 +50,11 @@ public class AutoFragment extends Fragment {
 
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
 
+            final Button UNDO_BUTTON = VIEW.findViewById(R.id.autoUndoButton);
+
+            final ArrayList<String>USER_ACTIONS = new ArrayList<String>();
+            USER_ACTIONS.add("Block");
+
             powerCellHitButtons[0] = VIEW.findViewById(R.id.innerAutoButton);
             powerCellHitButtons[1] = VIEW.findViewById(R.id.outerAutoButton);
             powerCellHitButtons[2] = VIEW.findViewById(R.id.bottomAutoButton);
@@ -58,6 +64,7 @@ public class AutoFragment extends Fragment {
 
             DRIVER_STATION_GROUP.check(R.id.stationOneButton);
             setAllianceColor(ALLIANCE_COLOR_BUTTON);
+            setButtonLabels();
 
             ALLIANCE_COLOR_BUTTON.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -90,7 +97,8 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     powerCellHit[0]++;
-                    powerCellHitButtons[0].setText(String.format("INNER: %d", powerCellHit[0]));
+                    setButtonLabels();
+                    USER_ACTIONS.add("hit0");
                 }
             });
 
@@ -98,7 +106,8 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     powerCellHit[1]++;
-                    powerCellHitButtons[1].setText(String.format("OUTER: %d", powerCellHit[1]));
+                    setButtonLabels();
+                    USER_ACTIONS.add("hit1");
                 }
             });
 
@@ -106,7 +115,8 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     powerCellHit[2]++;
-                    powerCellHitButtons[2].setText(String.format("BOTTOM: %d", powerCellHit[2]));
+                    setButtonLabels();
+                    USER_ACTIONS.add("hit2");
                 }
             });
 
@@ -114,7 +124,8 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     powerCellMiss[0]++;
-                    powerCellMissButtons[0].setText(String.format("HIGH: %d", powerCellMiss[0]));
+                    setButtonLabels();
+                    USER_ACTIONS.add("miss0");
                 }
             });
 
@@ -122,7 +133,25 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     powerCellMiss[1]++;
-                    powerCellMissButtons[1].setText(String.format("LOW: %d", powerCellMiss[1]));
+                    setButtonLabels();
+                    USER_ACTIONS.add("miss1");
+                }
+            });
+
+            UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String LAST_ACTION = USER_ACTIONS.get(USER_ACTIONS.size()-1);
+                    if (!LAST_ACTION.equals("Block")) {
+                        final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
+                        if (LAST_ACTION.substring(0, 3).equals("hit")) {
+                            powerCellHit[INDEX]--;
+                        } else {
+                            powerCellMiss[INDEX]--;
+                        }
+                        setButtonLabels();
+                        USER_ACTIONS.remove(USER_ACTIONS.size()-1);
+                    }
                 }
             });
         }
@@ -134,6 +163,15 @@ public class AutoFragment extends Fragment {
                         ? getResources().getColor(R.color.backgroundRed)
                         : getResources().getColor(R.color.backgroundBlue)
         );
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void setButtonLabels() {
+        powerCellHitButtons[0].setText(String.format("INNER: %d", powerCellHit[0]));
+        powerCellHitButtons[1].setText(String.format("OUTER: %d", powerCellHit[1]));
+        powerCellHitButtons[2].setText(String.format("BOTTOM: %d", powerCellHit[2]));
+        powerCellMissButtons[0].setText(String.format("HIGH: %d", powerCellMiss[0]));
+        powerCellMissButtons[1].setText(String.format("LOW: %d", powerCellMiss[1]));
     }
 }
 
