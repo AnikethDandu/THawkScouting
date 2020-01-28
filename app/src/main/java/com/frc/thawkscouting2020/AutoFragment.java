@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 public class AutoFragment extends Fragment {
+    static String color = "BLUE";
 
     private int[] powerCellHit = {0, 0, 0};
     private int[] powerCellMiss = {0, 0};
@@ -158,11 +160,13 @@ public class AutoFragment extends Fragment {
     }
 
     private void setAllianceColor(ToggleButton toggleButton) {
+        // TODO: CHANGE FIELD IMAGE WHEN COLOR CHANGES
         toggleButton.setBackgroundColor(
                 toggleButton.isChecked()
                         ? getResources().getColor(R.color.backgroundRed)
                         : getResources().getColor(R.color.backgroundBlue)
         );
+        color = toggleButton.isChecked() ? "RED" : "BLUE";
     }
 
     @SuppressLint("DefaultLocale")
