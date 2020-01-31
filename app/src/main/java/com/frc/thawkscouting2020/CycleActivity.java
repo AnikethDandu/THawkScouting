@@ -18,13 +18,15 @@ public class CycleActivity extends AppCompatActivity {
     final int[] CYCLE_HIT = {0, 0, 0};
     final int[] CYCLE_MISS = {0, 0};
 
-    private List<Cycle> tempCycles;
+    private DataViewModel dataViewModel;
 
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cycle);
+
+        dataViewModel = MainActivity.dataViewModel;
 
         /* GETS RID OF HEADER */
         try
@@ -42,6 +44,8 @@ public class CycleActivity extends AppCompatActivity {
         cycleHitButtons[2] = findViewById(R.id.cycleBottomButton);
         cycleMissButtons[0] = findViewById(R.id.cycleHighButton);
         cycleMissButtons[1] = findViewById(R.id.cycleLowerButton);
+
+        setButtonLabels();
 
         cycleHitButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,10 +99,20 @@ public class CycleActivity extends AppCompatActivity {
         final Button ACCEPT_BUTTON = findViewById(R.id.acceptButton);
         ACCEPT_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view){
                 // TODO: TRACK PARTS OF CYCLES
                 Cycle currentCycle = new Cycle(CYCLE_HIT[0], CYCLE_HIT[1], CYCLE_HIT[2], CYCLE_MISS[0], CYCLE_MISS[1]);
                 TeleOpFragment.cycles.add(currentCycle);
+                final String[] CYCLE = new String[5];
+                CYCLE[0] = String.valueOf(currentCycle.innerHit);
+                CYCLE[1] = String.valueOf(currentCycle.outerHit);
+                CYCLE[2] = String.valueOf(currentCycle.bottomHit);
+                CYCLE[3] = String.valueOf(currentCycle.highMiss);
+                CYCLE[4] = String.valueOf(currentCycle.lowMiss);
+                dataViewModel.LastCycle.setValue(CYCLE);
+                for (int  i = 0; i < 5; i++) {
+                    TeleOpFragment.CyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
+                }
                 finish();
             }
         });

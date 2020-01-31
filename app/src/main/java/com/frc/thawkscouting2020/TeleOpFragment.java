@@ -1,6 +1,5 @@
 package com.frc.thawkscouting2020;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
@@ -23,8 +22,11 @@ import java.util.List;
 
 public class TeleOpFragment extends Fragment {
 
-    final TextView[][] SCORING_LABLES = new TextView[2][3];
+    final private ArrayList<String> ACTIONS = new ArrayList<>();
+
+    final private TextView[][] SCORING_LABELS = new TextView[2][3];
     final int[][] SCORING = new int[2][3];
+    static int[][] CyclesWithPositions = new int[6][5];
 
     static List<Cycle> cycles = new ArrayList<>();
     private List<int[]> scoring_positions = new ArrayList<>();
@@ -39,10 +41,17 @@ public class TeleOpFragment extends Fragment {
 
     private long timeElapsedOn, timeElapsedAgainst;
 
+    private int penalties = 0;
+
+    static int[] SCORING_POSITIONS = {0, 0};
+
+    private DataViewModel dataViewModel;
+
     @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        dataViewModel = MainActivity.dataViewModel;
         final View VIEW = inflater.inflate(R.layout.teleopfragment_layout, container, false);
 
         final ImageView MAP = VIEW.findViewById(R.id.fieldMap);
@@ -56,24 +65,58 @@ public class TeleOpFragment extends Fragment {
 
         final Button UNDO_BUTTON = VIEW.findViewById(R.id.teleUndoButton);
 
-        SCORING_LABLES[0][0] = VIEW.findViewById(R.id.label00);
-        SCORING_LABLES[0][1] = VIEW.findViewById(R.id.label01);
-        SCORING_LABLES[0][2] = VIEW.findViewById(R.id.label02);
-        SCORING_LABLES[1][0] = VIEW.findViewById(R.id.label10);
-        SCORING_LABLES[1][1] = VIEW.findViewById(R.id.label11);
-        SCORING_LABLES[1][2] = VIEW.findViewById(R.id.label12);
+        final Button PENALTIES_BUTTON = VIEW.findViewById(R.id.penaltiesButton);
+
+        ACTIONS.add("BLOCK");
+
+        SCORING_LABELS[0][0] = VIEW.findViewById(R.id.label00);
+        SCORING_LABELS[0][1] = VIEW.findViewById(R.id.label01);
+        SCORING_LABELS[0][2] = VIEW.findViewById(R.id.label02);
+        SCORING_LABELS[1][0] = VIEW.findViewById(R.id.label10);
+        SCORING_LABELS[1][1] = VIEW.findViewById(R.id.label11);
+        SCORING_LABELS[1][2] = VIEW.findViewById(R.id.label12);
+
+        dataViewModel.DefenseOn.setValue(0);
+        dataViewModel.PlayingDefense.setValue(0);
+        dataViewModel.Penalties.setValue(penalties);
 
         UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!cycles.isEmpty()) {
-                    final int X = scoring_positions.get(scoring_positions.size()-1)[0];
-                    final int Y = scoring_positions.get(scoring_positions.size()-1)[1];
-                    System.out.println(String.format("%d, %d", X, Y));
-                    SCORING[X][Y]--;
-                    setScoreLabel(X, Y);
-                    scoring_positions.remove(scoring_positions.get(scoring_positions.size()-1));
-                    cycles.remove(cycles.size()-1);
+                final String LAST_ACTION = ACTIONS.get(ACTIONS.size()-1);
+                switch (LAST_ACTION) {
+                    case "CYCLE":
+                        if (!cycles.isEmpty()) {
+                            final Cycle LAST_CYCLE = cycles.get(cycles.size()-1);
+                            final int[] LAST_NUMBERS = new int[5];
+                            LAST_NUMBERS[0] = LAST_CYCLE.innerHit;
+                            LAST_NUMBERS[1] = LAST_CYCLE.outerHit;
+                            LAST_NUMBERS[2] = LAST_CYCLE.bottomHit;
+                            LAST_NUMBERS[3] = LAST_CYCLE.highMiss;
+                            LAST_NUMBERS[4] = LAST_CYCLE.lowMiss;
+                            // TODO: FIX UNDO BUTTON (NO REFERENCE TO LAST SCORING POSITION)
+                            final int[] last_pos = scoring_positions.get(scoring_positions.size()-1);
+                            final int[] pos= {last_pos[0], last_pos[1]};
+                            final int X = scoring_positions.get(scoring_positions.size()-1)[0];
+                            final int Y = scoring_positions.get(scoring_positions.size()-1)[1];
+                            SCORING[X][Y]--;
+                            setScoreLabel(X, Y);
+                            for (int i = 0; i < 5; i++) {
+                                CyclesWithPositions[X+2*Y][i] -= LAST_NUMBERS[i];
+                            }
+                            scoring_positions.remove(scoring_positions.size()-1);
+                            cycles.remove(cycles.size()-1);
+                        }
+                        ACTIONS.remove(LAST_ACTION);
+                        break;
+                    case "PENALTY":
+                        penalties--;
+                        ACTIONS.remove(LAST_ACTION);
+                        PENALTIES_BUTTON.setText(String.format("PENALTIES: %d", penalties));
+                        dataViewModel.Penalties.setValue(penalties);
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -82,7 +125,6 @@ public class TeleOpFragment extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-
                     final float X_PT = motionEvent.getX();
                     final float Y_PT = motionEvent.getY();
 
@@ -99,12 +141,16 @@ public class TeleOpFragment extends Fragment {
                             break;
                         }
                     }
-                    SCORING[SELECTED_BOX[0]][SELECTED_BOX[1]]++;
-                    setScoreLabel(SELECTED_BOX[0], SELECTED_BOX[1]);
+                    final int X = SELECTED_BOX[0];
+                    final int Y = SELECTED_BOX[1];
+                    SCORING_POSITIONS[0] = X;
+                    SCORING_POSITIONS[1] = Y;
+                    SCORING[X][Y]++;
+                    setScoreLabel(X, Y);
                     final Intent CYCLE_INTENT = new Intent(getActivity(), CycleActivity.class);
                     startActivity(CYCLE_INTENT);
-                    final int[] SCORING_POSITIONS = {SELECTED_BOX[0], SELECTED_BOX[1]};
-                    scoring_positions.add(SCORING_POSITIONS);
+                    scoring_positions.add(new int [] {X, Y});
+                    ACTIONS.add("CYCLE");
                 }
                 return false;
             }
@@ -119,6 +165,7 @@ public class TeleOpFragment extends Fragment {
                 } else {
                     timeElapsedOn = SystemClock.elapsedRealtime() - ON_DEFENSE_TIMER.getBase();
                     ON_DEFENSE_TIMER.stop();
+                    dataViewModel.DefenseOn.setValue(returnChronometerTime(ON_DEFENSE_TIMER));
                 }
             }
         });
@@ -132,6 +179,7 @@ public class TeleOpFragment extends Fragment {
                 } else {
                     timeElapsedAgainst = SystemClock.elapsedRealtime() - PLAYING_DEFENSE_TIMER.getBase();
                     PLAYING_DEFENSE_TIMER.stop();
+                    dataViewModel.PlayingDefense.setValue(returnChronometerTime(PLAYING_DEFENSE_TIMER));
                 }
             }
         });
@@ -153,6 +201,17 @@ public class TeleOpFragment extends Fragment {
             }
         });
 
+        PENALTIES_BUTTON.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                penalties++;
+                ACTIONS.add("PENALTY");
+                PENALTIES_BUTTON.setText(String.format("PENALTIES: %d", penalties));
+                dataViewModel.Penalties.setValue(penalties);
+
+            }
+        });
+
         return VIEW;
     }
 
@@ -165,6 +224,13 @@ public class TeleOpFragment extends Fragment {
     }
 
     private void setScoreLabel(int x, int y) {
-        SCORING_LABLES[x][y].setText(String.valueOf(SCORING[x][y]));
+        SCORING_LABELS[x][y].setText(String.valueOf(SCORING[x][y]));
+    }
+
+    private int returnChronometerTime(Chronometer c) {
+        String[] time = c.getText().toString().split(":");
+        int minutes = Integer.parseInt(time[0]);
+        int seconds = Integer.parseInt(time[1]);
+        return minutes * 60 + seconds;
     }
 }

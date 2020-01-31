@@ -8,10 +8,13 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.*;
+import androidx.lifecycle.*;
 
 import com.frc.thawkscouting2020.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static DataViewModel dataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,5 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
     }
 }

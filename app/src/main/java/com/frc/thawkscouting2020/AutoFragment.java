@@ -24,6 +24,8 @@ import java.util.ArrayList;
 public class AutoFragment extends Fragment {
     static String color = "BLUE";
 
+    private DataViewModel dataViewModel;
+
     private int[] powerCellHit = {0, 0, 0};
     private int[] powerCellMiss = {0, 0};
 
@@ -44,6 +46,8 @@ public class AutoFragment extends Fragment {
 
         /* KEEP ALL CODE INSIDE IF STATEMENT TO AVOID NULL POINTER EXCEPTIONS */
         if (getView() != null) {
+            dataViewModel = MainActivity.dataViewModel;
+
             final View VIEW = getView();
             final ToggleButton ALLIANCE_COLOR_BUTTON = VIEW.findViewById(R.id.allianceButton);
 
@@ -68,10 +72,19 @@ public class AutoFragment extends Fragment {
             setAllianceColor(ALLIANCE_COLOR_BUTTON);
             setButtonLabels();
 
+            MATCH_EDIT_TEXT.setText("0");
+            TEAM_EDIT_TEXT.setText("9999");
+
+            dataViewModel.Team.setValue(TEAM_EDIT_TEXT.getText().toString());
+            dataViewModel.Color.setValue(ALLIANCE_COLOR_BUTTON.getText().toString());
+            dataViewModel.Match.setValue(MATCH_EDIT_TEXT.getText().toString());
+            dataViewModel.Station.setValue(1);
+
             ALLIANCE_COLOR_BUTTON.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     setAllianceColor(ALLIANCE_COLOR_BUTTON);
+                    MainActivity.dataViewModel.Color.setValue(ALLIANCE_COLOR_BUTTON.getText().toString());
                 }
             });
 
@@ -81,6 +94,7 @@ public class AutoFragment extends Fragment {
                     MATCH_EDIT_TEXT.setText(MATCH_EDIT_TEXT.getText().toString().equals("")
                             ? "0"
                             : MATCH_EDIT_TEXT.getText().toString());
+                    MainActivity.dataViewModel.Match.setValue(MATCH_EDIT_TEXT.getText().toString());
                     return false;
                 }
             });
@@ -91,7 +105,15 @@ public class AutoFragment extends Fragment {
                     TEAM_EDIT_TEXT.setText(TEAM_EDIT_TEXT.getText().toString().equals("")
                             ? "9999"
                             : TEAM_EDIT_TEXT.getText().toString());
+                    MainActivity.dataViewModel.Team.setValue(TEAM_EDIT_TEXT.getText().toString());
                     return false;
+                }
+            });
+
+            DRIVER_STATION_GROUP.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                    dataViewModel.Station.setValue(i+1);
                 }
             });
 
@@ -154,6 +176,8 @@ public class AutoFragment extends Fragment {
                         setButtonLabels();
                         USER_ACTIONS.remove(USER_ACTIONS.size()-1);
                     }
+                    dataViewModel.AutoHits.setValue(powerCellHit);
+                    dataViewModel.AutoMiss.setValue(powerCellMiss);
                 }
             });
         }
@@ -176,6 +200,8 @@ public class AutoFragment extends Fragment {
         powerCellHitButtons[2].setText(String.format("BOTTOM: %d", powerCellHit[2]));
         powerCellMissButtons[0].setText(String.format("HIGH: %d", powerCellMiss[0]));
         powerCellMissButtons[1].setText(String.format("LOW: %d", powerCellMiss[1]));
+        dataViewModel.AutoHits.setValue(powerCellHit);
+        dataViewModel.AutoMiss.setValue(powerCellMiss);
     }
 }
 

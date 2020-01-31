@@ -23,7 +23,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/blue_field" />
+        app:srcCompat="@drawable/blue_field2" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -38,18 +38,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.2625" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="Defense"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline27"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
@@ -141,7 +129,7 @@
         android:layout_marginRight="10dp"
         android:gravity="right"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline28"
         app:layout_constraintEnd_toStartOf="@+id/midVert"
@@ -156,7 +144,7 @@
         android:layout_marginRight="10dp"
         android:gravity="right"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline29"
         app:layout_constraintEnd_toStartOf="@+id/midVert"
@@ -171,7 +159,7 @@
         android:layout_marginRight="10dp"
         android:gravity="right"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toStartOf="@+id/midVert"
@@ -185,7 +173,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline28"
         app:layout_constraintEnd_toEndOf="@id/fieldMap"
@@ -199,7 +187,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline29"
         app:layout_constraintEnd_toEndOf="@+id/fieldMap"
@@ -213,11 +201,21 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:text="0"
-        android:textSize="26dp"
+        android:textSize="50dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/fieldMap"
         app:layout_constraintEnd_toEndOf="@id/fieldMap"
         app:layout_constraintStart_toStartOf="@+id/midVert"
         app:layout_constraintTop_toTopOf="@+id/guideline29" />
+
+    <Button
+        android:id="@+id/penaltiesButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="PENALTIES"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline27"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
