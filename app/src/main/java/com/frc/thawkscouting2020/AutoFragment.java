@@ -32,10 +32,19 @@ public class AutoFragment extends Fragment {
     private Button[] powerCellHitButtons = new Button[3];
     private Button[] powerCellMissButtons = new Button[2];
 
+    EditText MATCH_EDIT_TEXT;
+    EditText TEAM_EDIT_TEXT;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.autofragment_layout, container, false);
+        final View VIEW = inflater.inflate(R.layout.autofragment_layout, container, false);
+        MATCH_EDIT_TEXT = VIEW.findViewById(R.id.matchTextbox);
+        TEAM_EDIT_TEXT = VIEW.findViewById(R.id.teamTextbox);
+
+        MATCH_EDIT_TEXT.setText("0");
+        TEAM_EDIT_TEXT.setText("9999");
+        return VIEW;
     }
 
     @Override
@@ -50,9 +59,6 @@ public class AutoFragment extends Fragment {
 
             final View VIEW = getView();
             final ToggleButton ALLIANCE_COLOR_BUTTON = VIEW.findViewById(R.id.allianceButton);
-
-            final EditText MATCH_EDIT_TEXT = VIEW.findViewById(R.id.matchTextbox);
-            final EditText TEAM_EDIT_TEXT = VIEW.findViewById(R.id.teamTextbox);
 
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
 
@@ -71,9 +77,6 @@ public class AutoFragment extends Fragment {
             DRIVER_STATION_GROUP.check(R.id.stationOneButton);
             setAllianceColor(ALLIANCE_COLOR_BUTTON);
             setButtonLabels();
-
-            MATCH_EDIT_TEXT.setText("0");
-            TEAM_EDIT_TEXT.setText("9999");
 
             dataViewModel.Team.setValue(TEAM_EDIT_TEXT.getText().toString());
             dataViewModel.Color.setValue(ALLIANCE_COLOR_BUTTON.getText().toString());
