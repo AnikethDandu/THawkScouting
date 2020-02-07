@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.*;
 import android.os.Bundle;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CycleActivity extends AppCompatActivity {
 
@@ -17,7 +16,6 @@ public class CycleActivity extends AppCompatActivity {
     private ArrayList<String> undoActions = new ArrayList<>();
     final int[] CYCLE_HIT = {0, 0, 0};
     final int[] CYCLE_MISS = {0, 0};
-    Toast noScoreToast;
 
     private DataViewModel dataViewModel;
 
@@ -34,7 +32,7 @@ public class CycleActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
         catch (NullPointerException e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();;
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         undoActions.add("BLOCK");
