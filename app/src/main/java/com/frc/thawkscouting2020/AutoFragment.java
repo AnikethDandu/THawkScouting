@@ -32,6 +32,12 @@ public class AutoFragment extends Fragment {
     private Button[] powerCellHitButtons = new Button[3];
     private Button[] powerCellMissButtons = new Button[2];
 
+    final ArrayList<String>USER_ACTIONS = new ArrayList<String>() {
+        {
+            add("Block");
+        }
+    };
+
     EditText MATCH_EDIT_TEXT;
     EditText TEAM_EDIT_TEXT;
 
@@ -48,10 +54,33 @@ public class AutoFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        final Button UNDO_BUTTON = getView().findViewById(R.id.autoUndoButton);
+
+        UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String LAST_ACTION = USER_ACTIONS.get(USER_ACTIONS.size()-1);
+                if (!LAST_ACTION.equals("Block")) {
+                    final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
+                    if (LAST_ACTION.substring(0, 3).equals("hit")) {
+                        powerCellHit[INDEX]--;
+                    } else {
+                        powerCellMiss[INDEX]--;
+                    }
+                    setButtonLabels();
+                    USER_ACTIONS.remove(USER_ACTIONS.size()-1);
+                }
+                dataViewModel.AutoHits.setValue(powerCellHit);
+                dataViewModel.AutoMiss.setValue(powerCellMiss);
+            }
+        });
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
-        // TODO: Calculate how many power cells the team picked up during autonomous
 
         /* KEEP ALL CODE INSIDE IF STATEMENT TO AVOID NULL POINTER EXCEPTIONS */
         if (getView() != null) {
@@ -61,11 +90,6 @@ public class AutoFragment extends Fragment {
             final ToggleButton ALLIANCE_COLOR_BUTTON = VIEW.findViewById(R.id.allianceButton);
 
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
-
-            final Button UNDO_BUTTON = VIEW.findViewById(R.id.autoUndoButton);
-
-            final ArrayList<String>USER_ACTIONS = new ArrayList<String>();
-            USER_ACTIONS.add("Block");
 
             powerCellHitButtons[0] = VIEW.findViewById(R.id.innerAutoButton);
             powerCellHitButtons[1] = VIEW.findViewById(R.id.outerAutoButton);
@@ -162,25 +186,6 @@ public class AutoFragment extends Fragment {
                     powerCellMiss[1]++;
                     setButtonLabels();
                     USER_ACTIONS.add("miss1");
-                }
-            });
-
-            UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String LAST_ACTION = USER_ACTIONS.get(USER_ACTIONS.size()-1);
-                    if (!LAST_ACTION.equals("Block")) {
-                        final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
-                        if (LAST_ACTION.substring(0, 3).equals("hit")) {
-                            powerCellHit[INDEX]--;
-                        } else {
-                            powerCellMiss[INDEX]--;
-                        }
-                        setButtonLabels();
-                        USER_ACTIONS.remove(USER_ACTIONS.size()-1);
-                    }
-                    dataViewModel.AutoHits.setValue(powerCellHit);
-                    dataViewModel.AutoMiss.setValue(powerCellMiss);
                 }
             });
         }
