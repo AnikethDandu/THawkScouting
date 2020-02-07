@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 public class EndgameFragment extends Fragment {
 
     private DataViewModel dataViewModel;
-    static CheckBox[] CHECKBOXES = new CheckBox[10];
+    static CheckBox[] CHECKBOXES = new CheckBox[11];
     static EditText NOTES;
 
 
@@ -28,14 +28,15 @@ public class EndgameFragment extends Fragment {
 
         CHECKBOXES[0] = VIEW.findViewById(R.id.rotationCheckbox);
         CHECKBOXES[1] = VIEW.findViewById(R.id.colorCheckbox);
-        CHECKBOXES[2] = VIEW.findViewById(R.id.climbCheckBox);
-        CHECKBOXES[3] = VIEW.findViewById(R.id.levelCheckbox);
-        CHECKBOXES[4] = VIEW.findViewById(R.id.doubleCheckbox);
-        CHECKBOXES[5] = VIEW.findViewById(R.id.parkCheckbox);
-        CHECKBOXES[6] = VIEW.findViewById(R.id.brownedOutCheckbox);
-        CHECKBOXES[7] = VIEW.findViewById(R.id.disableCheckbox);
-        CHECKBOXES[8] = VIEW.findViewById(R.id.yellowCardCheckbox);
-        CHECKBOXES[9] = VIEW.findViewById(R.id.redCardCheckbox);
+        CHECKBOXES[2] = VIEW.findViewById(R.id.attemptedClimb);
+        CHECKBOXES[3] = VIEW.findViewById(R.id.climbCheckBox);
+        CHECKBOXES[4] = VIEW.findViewById(R.id.levelCheckbox);
+        CHECKBOXES[5] = VIEW.findViewById(R.id.attemptedDoubleCheckbox);
+        CHECKBOXES[6] = VIEW.findViewById(R.id.doubleCheckbox);
+        CHECKBOXES[7] = VIEW.findViewById(R.id.brownedOutCheckbox);
+        CHECKBOXES[8] = VIEW.findViewById(R.id.disableCheckbox);
+        CHECKBOXES[9] = VIEW.findViewById(R.id.yellowCardCheckbox);
+        CHECKBOXES[10] = VIEW.findViewById(R.id.redCardCheckbox);
         NOTES = VIEW.findViewById(R.id.notes);
         NOTES.setText("");
 

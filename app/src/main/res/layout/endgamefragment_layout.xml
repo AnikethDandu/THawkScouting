@@ -82,7 +82,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:text="CLIMB"
-        app:layout_constraintBottom_toTopOf="@+id/guideline36"
+        app:layout_constraintBottom_toTopOf="@+id/guideline38"
         app:layout_constraintEnd_toStartOf="@+id/midVert"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline31" />
@@ -116,7 +116,7 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline32"
         app:layout_constraintEnd_toStartOf="@+id/midVert"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline36" />
+        app:layout_constraintTop_toTopOf="@+id/guideline39" />
 
     <CheckBox
         android:id="@+id/levelCheckbox"
@@ -129,20 +129,20 @@
         app:layout_constraintTop_toTopOf="@+id/guideline31" />
 
     <CheckBox
-        android:id="@+id/doubleCheckbox"
+        android:id="@+id/attemptedDoubleCheckbox"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="DOUBLE CLIMB"
+        android:text="ATTEMPTED DOUBLE CLIMB"
         app:layout_constraintBottom_toTopOf="@+id/guideline39"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/midVert"
         app:layout_constraintTop_toTopOf="@+id/guideline38" />
 
     <CheckBox
-        android:id="@+id/parkCheckbox"
+        android:id="@+id/doubleCheckbox"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="PARKED"
+        android:text="SUCCESSFUL DOUBLE CLIMB"
         app:layout_constraintBottom_toTopOf="@+id/guideline32"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/midVert"
@@ -245,5 +245,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/midVert"
         app:layout_constraintTop_toTopOf="@+id/guideline43" />
+
+    <CheckBox
+        android:id="@+id/attemptedClimb"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="ATTEMPTED CLIMB"
+        app:layout_constraintBottom_toTopOf="@+id/guideline39"
+        app:layout_constraintEnd_toStartOf="@+id/midVert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline38" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

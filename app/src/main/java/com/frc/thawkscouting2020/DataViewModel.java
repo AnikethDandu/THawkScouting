@@ -19,10 +19,11 @@ public class DataViewModel extends ViewModel {
     MutableLiveData<int[][]>Cycles = new MutableLiveData<>();
     MutableLiveData<Boolean>RotationControl = new MutableLiveData<>();
     MutableLiveData<Boolean>ColorControl = new MutableLiveData<>();
+    MutableLiveData<Boolean>AttemptedClimb = new MutableLiveData<>();
     MutableLiveData<Boolean>Climb = new MutableLiveData<>();
     MutableLiveData<Boolean>Level = new MutableLiveData<>();
+    MutableLiveData<Boolean>AttemptedDoubleClimb = new MutableLiveData<>();
     MutableLiveData<Boolean>DoubleClimb = new MutableLiveData<>();
-    MutableLiveData<Boolean>Park = new MutableLiveData<>();
     MutableLiveData<Boolean>BrownedOut = new MutableLiveData<>();
     MutableLiveData<Boolean>Disabled = new MutableLiveData<>();
     MutableLiveData<Boolean>YellowCard = new MutableLiveData<>();

@@ -30,14 +30,15 @@ public class QRActivity extends AppCompatActivity {
         dataViewModel = MainActivity.dataViewModel;
         dataViewModel.RotationControl.setValue(EndgameFragment.CHECKBOXES[0].isChecked());
         dataViewModel.ColorControl.setValue(EndgameFragment.CHECKBOXES[1].isChecked());
-        dataViewModel.Climb.setValue(EndgameFragment.CHECKBOXES[2].isChecked());
-        dataViewModel.Level.setValue(EndgameFragment.CHECKBOXES[3].isChecked());
-        dataViewModel.DoubleClimb.setValue(EndgameFragment.CHECKBOXES[4].isChecked());
-        dataViewModel.Park.setValue(EndgameFragment.CHECKBOXES[5].isChecked());
-        dataViewModel.BrownedOut.setValue(EndgameFragment.CHECKBOXES[6].isChecked());
-        dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[7].isChecked());
-        dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
-        dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
+        dataViewModel.AttemptedClimb.setValue(EndgameFragment.CHECKBOXES[2].isChecked());
+        dataViewModel.Climb.setValue(EndgameFragment.CHECKBOXES[3].isChecked());
+        dataViewModel.Level.setValue(EndgameFragment.CHECKBOXES[4].isChecked());
+        dataViewModel.AttemptedDoubleClimb.setValue(EndgameFragment.CHECKBOXES[5].isChecked());
+        dataViewModel.DoubleClimb.setValue(EndgameFragment.CHECKBOXES[6].isChecked());
+        dataViewModel.BrownedOut.setValue(EndgameFragment.CHECKBOXES[7].isChecked());
+        dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
+        dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
+        dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[10].isChecked());
         dataViewModel.Notes.setValue(EndgameFragment.NOTES.getText().toString());
 
         /* GETS RID OF HEADER */
@@ -115,10 +116,11 @@ public class QRActivity extends AppCompatActivity {
                 convertCycles(dataViewModel.Cycles.getValue()),
                 String.valueOf(dataViewModel.RotationControl.getValue()),
                 String.valueOf(dataViewModel.ColorControl.getValue()),
+                String.valueOf(dataViewModel.AttemptedClimb.getValue()),
                 String.valueOf(dataViewModel.Climb.getValue()),
                 String.valueOf(dataViewModel.Level.getValue()),
+                String.valueOf(dataViewModel.AttemptedDoubleClimb.getValue()),
                 String.valueOf(dataViewModel.DoubleClimb.getValue()),
-                String.valueOf(dataViewModel.Park.getValue()),
                 String.valueOf(dataViewModel.BrownedOut.getValue()),
                 String.valueOf(dataViewModel.Disabled.getValue()),
                 String.valueOf(dataViewModel.YellowCard.getValue()),
