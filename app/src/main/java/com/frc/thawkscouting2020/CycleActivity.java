@@ -17,6 +17,7 @@ public class CycleActivity extends AppCompatActivity {
     private ArrayList<String> undoActions = new ArrayList<>();
     final int[] CYCLE_HIT = {0, 0, 0};
     final int[] CYCLE_MISS = {0, 0};
+    Toast noScoreToast;
 
     private DataViewModel dataViewModel;
 
@@ -25,7 +26,6 @@ public class CycleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cycle);
-
         dataViewModel = MainActivity.dataViewModel;
 
         /* GETS RID OF HEADER */
@@ -34,7 +34,7 @@ public class CycleActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
         catch (NullPointerException e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();;
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();;
         }
 
         undoActions.add("BLOCK");
@@ -100,19 +100,39 @@ public class CycleActivity extends AppCompatActivity {
         ACCEPT_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                // TODO: TRACK PARTS OF CYCLES
-                Cycle currentCycle = new Cycle(CYCLE_HIT[0], CYCLE_HIT[1], CYCLE_HIT[2], CYCLE_MISS[0], CYCLE_MISS[1]);
-                TeleOpFragment.cycles.add(currentCycle);
-                final String[] CYCLE = new String[5];
-                CYCLE[0] = String.valueOf(currentCycle.innerHit);
-                CYCLE[1] = String.valueOf(currentCycle.outerHit);
-                CYCLE[2] = String.valueOf(currentCycle.bottomHit);
-                CYCLE[3] = String.valueOf(currentCycle.highMiss);
-                CYCLE[4] = String.valueOf(currentCycle.lowMiss);
-                dataViewModel.LastCycle.setValue(CYCLE);
-                for (int  i = 0; i < 5; i++) {
-                    TeleOpFragment.CyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
+                final int SHOTS = CYCLE_HIT[0] + CYCLE_HIT[1] + CYCLE_HIT[2] + CYCLE_MISS[0] + CYCLE_MISS[1];
+                if (SHOTS > 0) {
+                    Cycle currentCycle = new Cycle(CYCLE_HIT[0], CYCLE_HIT[1], CYCLE_HIT[2], CYCLE_MISS[0], CYCLE_MISS[1]);
+                    TeleOpFragment.cycles.add(currentCycle);
+                    final String[] CYCLE = new String[5];
+                    CYCLE[0] = String.valueOf(currentCycle.innerHit);
+                    CYCLE[1] = String.valueOf(currentCycle.outerHit);
+                    CYCLE[2] = String.valueOf(currentCycle.bottomHit);
+                    CYCLE[3] = String.valueOf(currentCycle.highMiss);
+                    CYCLE[4] = String.valueOf(currentCycle.lowMiss);
+                    dataViewModel.LastCycle.setValue(CYCLE);
+                    for (int  i = 0; i < 5; i++) {
+                        TeleOpFragment.CyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
+                    }
+                    final int X = TeleOpFragment.SELECTED_BOX[0];
+                    final int Y = TeleOpFragment.SELECTED_BOX[1];
+                    TeleOpFragment.SCORING_POSITIONS[0] = X;
+                    TeleOpFragment.SCORING_POSITIONS[1] = Y;
+                    TeleOpFragment.SCORING[X][Y]++;
+                    TeleOpFragment.setScoreLabel(X, Y);
+                    TeleOpFragment.scoring_positions.add(new int [] {X, Y});
+                    TeleOpFragment.ACTIONS.add("CYCLE");
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please score a shot for this cycle", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        final Button CANCEL_BUTTON = findViewById(R.id.CanelButton);
+        CANCEL_BUTTON.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 finish();
             }
         });
@@ -130,7 +150,7 @@ public class CycleActivity extends AppCompatActivity {
         final int HEIGHT = DISPLAY_METRICS.heightPixels;
         final int WIDTH = DISPLAY_METRICS.widthPixels;
 
-        getWindow().setLayout((int)(WIDTH*0.6), (int)(HEIGHT*0.6));
+        getWindow().setLayout((int)(WIDTH*0.75), (int)(HEIGHT*0.75));
     }
 
     @SuppressLint("DefaultLocale")

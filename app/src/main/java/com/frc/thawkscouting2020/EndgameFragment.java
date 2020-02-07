@@ -17,6 +17,8 @@ public class EndgameFragment extends Fragment {
     static CheckBox[] CHECKBOXES = new CheckBox[10];
     static EditText NOTES;
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

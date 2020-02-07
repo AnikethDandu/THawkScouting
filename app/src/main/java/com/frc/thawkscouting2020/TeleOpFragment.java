@@ -22,19 +22,19 @@ import java.util.List;
 
 public class TeleOpFragment extends Fragment {
 
-    final private ArrayList<String> ACTIONS = new ArrayList<>();
+    static ArrayList<String> ACTIONS = new ArrayList<>();
 
-    final private TextView[][] SCORING_LABELS = new TextView[2][3];
-    final int[][] SCORING = new int[2][3];
+    static TextView[][] SCORING_LABELS = new TextView[2][3];
+    static int[][] SCORING = new int[2][3];
     static int[][] CyclesWithPositions = new int[6][5];
 
     static List<Cycle> cycles = new ArrayList<>();
-    private List<int[]> scoring_positions = new ArrayList<>();
+    static List<int[]> scoring_positions = new ArrayList<>();
 
     final private ArrayList<Integer> VERTICAL_LINES = new ArrayList<>();
     final private ArrayList<Integer> HORIZONTAL_LINES = new ArrayList<>();
 
-    final private int[] SELECTED_BOX  = {0, 0};
+    static int[] SELECTED_BOX  = {0, 0};
 
     private int FIELD_HEIGHT;
     private int FIELD_WIDTH;
@@ -141,16 +141,8 @@ public class TeleOpFragment extends Fragment {
                             break;
                         }
                     }
-                    final int X = SELECTED_BOX[0];
-                    final int Y = SELECTED_BOX[1];
-                    SCORING_POSITIONS[0] = X;
-                    SCORING_POSITIONS[1] = Y;
-                    SCORING[X][Y]++;
-                    setScoreLabel(X, Y);
                     final Intent CYCLE_INTENT = new Intent(getActivity(), CycleActivity.class);
                     startActivity(CYCLE_INTENT);
-                    scoring_positions.add(new int [] {X, Y});
-                    ACTIONS.add("CYCLE");
                 }
                 return false;
             }
@@ -223,7 +215,7 @@ public class TeleOpFragment extends Fragment {
         }
     }
 
-    private void setScoreLabel(int x, int y) {
+    static void setScoreLabel(int x, int y) {
         SCORING_LABELS[x][y].setText(String.valueOf(SCORING[x][y]));
     }
 
