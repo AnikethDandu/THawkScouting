@@ -47,9 +47,6 @@ public class AutoFragment extends Fragment {
         final View VIEW = inflater.inflate(R.layout.autofragment_layout, container, false);
         MATCH_EDIT_TEXT = VIEW.findViewById(R.id.matchTextbox);
         TEAM_EDIT_TEXT = VIEW.findViewById(R.id.teamTextbox);
-
-        MATCH_EDIT_TEXT.setText("0");
-        TEAM_EDIT_TEXT.setText("9999");
         return VIEW;
     }
 
