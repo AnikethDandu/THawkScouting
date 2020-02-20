@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 public class AutoFragment extends Fragment {
     static String color = "BLUE";
 
-    private DataViewModel dataViewModel;
+    private static DataViewModel dataViewModel;
 
     private int[] powerCellHit = {0, 0, 0};
     private int[] powerCellMiss = {0, 0};
@@ -32,14 +33,14 @@ public class AutoFragment extends Fragment {
     private Button[] powerCellHitButtons = new Button[3];
     private Button[] powerCellMissButtons = new Button[2];
 
-    final ArrayList<String>USER_ACTIONS = new ArrayList<String>() {
+    private final ArrayList<String>USER_ACTIONS = new ArrayList<String>() {
         {
             add("Block");
         }
     };
 
-    EditText MATCH_EDIT_TEXT;
-    EditText TEAM_EDIT_TEXT;
+    private EditText MATCH_EDIT_TEXT;
+    private EditText TEAM_EDIT_TEXT;
 
     @Nullable
     @Override
@@ -54,41 +55,17 @@ public class AutoFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        final Button UNDO_BUTTON = getView().findViewById(R.id.autoUndoButton);
-
-        UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String LAST_ACTION = USER_ACTIONS.get(USER_ACTIONS.size()-1);
-                if (!LAST_ACTION.equals("Block")) {
-                    final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
-                    if (LAST_ACTION.substring(0, 3).equals("hit")) {
-                        powerCellHit[INDEX]--;
-                    } else {
-                        powerCellMiss[INDEX]--;
-                    }
-                    setButtonLabels();
-                    USER_ACTIONS.remove(USER_ACTIONS.size()-1);
-                }
-                dataViewModel.AutoHits.setValue(powerCellHit);
-                dataViewModel.AutoMiss.setValue(powerCellMiss);
-            }
-        });
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        /* KEEP ALL CODE INSIDE IF STATEMENT TO AVOID NULL POINTER EXCEPTIONS */
         if (getView() != null) {
             dataViewModel = MainActivity.dataViewModel;
 
             final View VIEW = getView();
+
             final ToggleButton ALLIANCE_COLOR_BUTTON = VIEW.findViewById(R.id.allianceButton);
+            final Button UNDO_BUTTON = getView().findViewById(R.id.autoUndoButton);
 
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
+
+            final CheckBox CROSSED_LINE_BOX = VIEW.findViewById(R.id.crossedLineCheckbox);
 
             powerCellHitButtons[0] = VIEW.findViewById(R.id.innerAutoButton);
             powerCellHitButtons[1] = VIEW.findViewById(R.id.outerAutoButton);
@@ -105,6 +82,14 @@ public class AutoFragment extends Fragment {
             dataViewModel.Color.setValue(ALLIANCE_COLOR_BUTTON.getText().toString());
             dataViewModel.Match.setValue(MATCH_EDIT_TEXT.getText().toString());
             dataViewModel.Station.setValue(1);
+            dataViewModel.CrossedLine.setValue(CROSSED_LINE_BOX.isChecked());
+
+            CROSSED_LINE_BOX.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dataViewModel.CrossedLine.setValue(CROSSED_LINE_BOX.isChecked());
+                }
+            });
 
             ALLIANCE_COLOR_BUTTON.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -138,7 +123,7 @@ public class AutoFragment extends Fragment {
             DRIVER_STATION_GROUP.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                    dataViewModel.Station.setValue(i+1);
+                    dataViewModel.Station.setValue(i + 1);
                 }
             });
 
@@ -186,11 +171,30 @@ public class AutoFragment extends Fragment {
                     USER_ACTIONS.add("miss1");
                 }
             });
+
+            UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final String LAST_ACTION = USER_ACTIONS.get(USER_ACTIONS.size()-1);
+                    if (!LAST_ACTION.equals("Block")) {
+                        final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
+                        if (LAST_ACTION.substring(0, 3).equals("hit")) {
+                            powerCellHit[INDEX]--;
+                        } else {
+                            powerCellMiss[INDEX]--;
+                        }
+                        setButtonLabels();
+                        USER_ACTIONS.remove(USER_ACTIONS.size()-1);
+                    }
+                    dataViewModel.AutoHits.setValue(powerCellHit);
+                    dataViewModel.AutoMiss.setValue(powerCellMiss);
+                }
+            });
         }
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void setAllianceColor(ToggleButton toggleButton) {
-        // TODO: CHANGE FIELD IMAGE WHEN COLOR CHANGES
         toggleButton.setBackgroundColor(
                 toggleButton.isChecked()
                         ? getResources().getColor(R.color.backgroundRed)

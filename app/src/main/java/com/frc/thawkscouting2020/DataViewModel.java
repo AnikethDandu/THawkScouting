@@ -10,6 +10,7 @@ public class DataViewModel extends ViewModel {
     MutableLiveData<String>Team = new MutableLiveData<>();
     MutableLiveData<String>Match = new MutableLiveData<>();
     MutableLiveData<String>Color = new MutableLiveData<>();
+    MutableLiveData<Boolean>CrossedLine = new MutableLiveData<>();
     MutableLiveData<int[]>AutoHits = new MutableLiveData<>();
     MutableLiveData<int[]>AutoMiss = new MutableLiveData<>();
     MutableLiveData<Integer>Station = new MutableLiveData<>();

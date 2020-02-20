@@ -18,7 +18,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class QRActivity extends AppCompatActivity {
+public class QRActivity extends AppCompatActivity{
 
     private DataViewModel dataViewModel;
 
@@ -109,6 +109,7 @@ public class QRActivity extends AppCompatActivity {
                 dataViewModel.Match.getValue(),
                 dataViewModel.Color.getValue(),
                 String.valueOf(dataViewModel.Station.getValue()),
+                String.valueOf(dataViewModel.CrossedLine.getValue()),
                 convertArray(dataViewModel.AutoHits.getValue()),
                 convertArray(dataViewModel.AutoMiss.getValue()),
                 String.valueOf(dataViewModel.PlayingDefense.getValue()),
