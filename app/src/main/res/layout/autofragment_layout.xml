@@ -5,7 +5,63 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/backgroundBlack">
+
+    <EditText
+        android:id="@+id/matchTextbox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:background="#83404B"
+        android:gravity="center"
+        android:hint="@string/match_hint"
+        android:inputType="number"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAFFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintEnd_toStartOf="@+id/guideline15"
+        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
+        app:layout_constraintTop_toTopOf="@+id/topHorizontal" />
+
+    <EditText
+        android:id="@+id/teamTextbox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#83404B"
+        android:gravity="center"
+        android:hint="@string/team_hint"
+        android:inputType="number"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#AAFFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintEnd_toStartOf="@+id/guideline15"
+        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
+        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+
+    <ToggleButton
+        android:id="@+id/allianceButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:checked="true"
+        android:textAllCaps="true"
+        android:textOff="@string/blue"
+        android:textOn="@string/red"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintTop_toTopOf="@+id/topHorizontal" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/midHorizontal"
@@ -26,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.05" />
+        app:layout_constraintGuide_percent="0.025" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/bottomHorizontal"
@@ -40,14 +96,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.05" />
+        app:layout_constraintGuide_percent="0.025" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
+        app:layout_constraintGuide_percent="0.975" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"
@@ -70,45 +126,12 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2625" />
 
-    <ToggleButton
-        android:id="@+id/allianceButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:textOff="@string/blue"
-        android:textOn="@string/red"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
-        app:layout_constraintTop_toTopOf="@+id/topHorizontal" />
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.25" />
-
-    <EditText
-        android:id="@+id/matchTextbox"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:hint="@string/match_hint"
-        android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/guideline7"
-        app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/topHorizontal" />
-
-    <EditText
-        android:id="@+id/teamTextbox"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:hint="@string/team_hint"
-        android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline11"
@@ -121,6 +144,7 @@
         android:id="@+id/driverStationGroup"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/guideline11"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
@@ -131,25 +155,47 @@
             android:id="@+id/stationOneButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
+            android:background="@drawable/light_blue_button"
+            android:gravity="center"
             android:tag="1"
-            android:text="Station 1" />
+            android:text="Station 1"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
 
         <RadioButton
             android:id="@+id/stationTwoButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
+            android:background="@drawable/light_blue_button"
+            android:gravity="center"
             android:tag="2"
-            android:text="Station 2" />
+            android:text="Station 2"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
 
         <RadioButton
             android:id="@+id/stationThreeButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:layout_weight="1"
+            android:background="@drawable/light_blue_button"
+            android:gravity="center"
             android:tag="3"
-            android:text="Station 3" />
+            android:text="Station 3"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:typeface="monospace" />
 
     </RadioGroup>
 
@@ -158,13 +204,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.4125" />
+        app:layout_constraintGuide_percent="0.425" />
 
     <CheckBox
         android:id="@+id/crossedLineCheckbox"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:text="Crossed Alliance Line"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="17.5sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
@@ -189,7 +245,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal|center_vertical"
         android:text="@string/hit"
+        android:textAllCaps="true"
+        android:textColor="@color/backgroundGreen"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/guideline14"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
@@ -200,7 +262,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal|center_vertical"
         android:text="@string/miss"
+        android:textAllCaps="true"
+        android:textColor="@color/backgroundRed"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/guideline14"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
@@ -219,17 +287,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.52" />
-
-    <Button
-        android:id="@+id/innerAutoButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/inner"
-        app:layout_constraintBottom_toTopOf="@+id/guideline17"
-        app:layout_constraintEnd_toStartOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline14"
-        android:onClick="onClick"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline17"
@@ -253,48 +310,95 @@
         app:layout_constraintGuide_percent="0.8625" />
 
     <Button
+        android:id="@+id/autoHighMissButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/score_buttons"
+        android:onClick="onClick"
+        android:text="@string/high"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/guideline18"
+        app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline16"
+        app:layout_constraintTop_toTopOf="@+id/guideline14"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/innerAutoButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/score_buttons"
+        android:onClick="onClick"
+        android:text="@string/inner"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        app:layout_constraintBottom_toTopOf="@+id/guideline17"
+        app:layout_constraintEnd_toStartOf="@+id/guideline15"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
+        app:layout_constraintTop_toTopOf="@+id/guideline14"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
         android:id="@+id/outerAutoButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/score_buttons"
         android:onClick="onClick"
         android:text="@string/outer"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@id/guideline18"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline17" />
+        app:layout_constraintTop_toTopOf="@+id/guideline17"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/bottomAutoButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/score_buttons"
+        android:onClick="onClick"
         android:text="@string/bottom"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toStartOf="@+id/guideline15"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
         app:layout_constraintTop_toTopOf="@+id/guideline18"
-        android:onClick="onClick"/>
-
-    <Button
-        android:id="@+id/autoHighMissButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/high"
-        app:layout_constraintBottom_toTopOf="@+id/guideline18"
-        app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
-        app:layout_constraintStart_toStartOf="@+id/guideline16"
-        app:layout_constraintTop_toTopOf="@+id/guideline14"
-        android:onClick="onClick"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/autoLowMissButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/score_buttons"
+        android:onClick="onClick"
         android:text="@string/low"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/guideline19"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline16"
         app:layout_constraintTop_toTopOf="@+id/guideline18"
-        android:onClick="onClick"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline20"
@@ -307,8 +411,14 @@
         android:id="@+id/autoUndoButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/undo_button"
         android:onClick="onClick"
         android:text="@string/auto_undo"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/bottomHorizontal"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
@@ -325,7 +435,14 @@
         android:id="@+id/textView7"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="Power cell scoring"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/midHorizontal"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"

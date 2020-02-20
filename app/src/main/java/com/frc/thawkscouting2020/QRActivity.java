@@ -39,6 +39,7 @@ public class QRActivity extends AppCompatActivity {
         dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
         dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
         dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[10].isChecked());
+        dataViewModel.ScouterName.setValue(EndgameFragment.NAME.getText().toString());
         dataViewModel.Notes.setValue(EndgameFragment.NOTES.getText().toString());
 
         /* GETS RID OF HEADER */
@@ -125,6 +126,7 @@ public class QRActivity extends AppCompatActivity {
                 String.valueOf(dataViewModel.Disabled.getValue()),
                 String.valueOf(dataViewModel.YellowCard.getValue()),
                 String.valueOf(dataViewModel.RedCard.getValue()),
+                String.valueOf(dataViewModel.ScouterName.getValue()),
                 String.valueOf(dataViewModel.Notes.getValue())
         };
 

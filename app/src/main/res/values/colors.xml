@@ -5,5 +5,10 @@
     <color name="colorAccent">#D81B60</color>
     <color name="backgroundBlue">#47B5FF</color>
     <color name="backgroundRed">#F56969</color>
-    <color name="maroon">#401721</color>
+    <color name="maroon">#42151D</color>
+    <color name="backgroundBlack">#313131</color>
+    <color name="IFYellow">#FACE3F</color>
+    <color name="IFBlue">#0A4E97</color>
+    <color name="IFBlueLight">#20B2D4</color>
+    <color name="backgroundGreen">#44DF45</color>
 </resources>

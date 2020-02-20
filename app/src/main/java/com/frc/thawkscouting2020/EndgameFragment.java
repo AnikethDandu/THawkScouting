@@ -16,6 +16,7 @@ public class EndgameFragment extends Fragment {
     private DataViewModel dataViewModel;
     static CheckBox[] CHECKBOXES = new CheckBox[11];
     static EditText NOTES;
+    static EditText NAME;
 
 
 
@@ -38,6 +39,8 @@ public class EndgameFragment extends Fragment {
         CHECKBOXES[9] = VIEW.findViewById(R.id.yellowCardCheckbox);
         CHECKBOXES[10] = VIEW.findViewById(R.id.redCardCheckbox);
         NOTES = VIEW.findViewById(R.id.notes);
+        NAME = VIEW.findViewById(R.id.scouterNameBox);
+        NOTES.setCursorVisible(false);
         NOTES.setText("");
 
         final Button QR_BUTTON = VIEW.findViewById(R.id.qrButton);

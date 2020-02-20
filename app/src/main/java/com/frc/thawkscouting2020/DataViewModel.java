@@ -28,6 +28,7 @@ public class DataViewModel extends ViewModel {
     MutableLiveData<Boolean>Disabled = new MutableLiveData<>();
     MutableLiveData<Boolean>YellowCard = new MutableLiveData<>();
     MutableLiveData<Boolean>RedCard = new MutableLiveData<>();
+    MutableLiveData<String>ScouterName = new MutableLiveData<>();
     MutableLiveData<String>Notes = new MutableLiveData<>();
     MutableLiveData<String[]>LastCycle = new MutableLiveData<>();
 }

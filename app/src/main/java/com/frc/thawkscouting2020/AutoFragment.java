@@ -47,6 +47,8 @@ public class AutoFragment extends Fragment {
         final View VIEW = inflater.inflate(R.layout.autofragment_layout, container, false);
         MATCH_EDIT_TEXT = VIEW.findViewById(R.id.matchTextbox);
         TEAM_EDIT_TEXT = VIEW.findViewById(R.id.teamTextbox);
+        MATCH_EDIT_TEXT.setCursorVisible(false);
+        TEAM_EDIT_TEXT.setCursorVisible(false);
         return VIEW;
     }
 
@@ -108,7 +110,6 @@ public class AutoFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     setAllianceColor(ALLIANCE_COLOR_BUTTON);
-                    MainActivity.dataViewModel.Color.setValue(ALLIANCE_COLOR_BUTTON.getText().toString());
                 }
             });
 
@@ -196,6 +197,7 @@ public class AutoFragment extends Fragment {
                         : getResources().getColor(R.color.backgroundBlue)
         );
         color = toggleButton.isChecked() ? "RED" : "BLUE";
+        MainActivity.dataViewModel.Color.setValue(toggleButton.isChecked() ? "Red" : "Blue");
     }
 
     @SuppressLint("DefaultLocale")

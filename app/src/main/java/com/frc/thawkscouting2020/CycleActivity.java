@@ -148,7 +148,7 @@ public class CycleActivity extends AppCompatActivity {
         final int HEIGHT = DISPLAY_METRICS.heightPixels;
         final int WIDTH = DISPLAY_METRICS.widthPixels;
 
-        getWindow().setLayout((int)(WIDTH*0.75), (int)(HEIGHT*0.75));
+        getWindow().setLayout((int)(WIDTH*0.75), (int)(HEIGHT*0.7125));
     }
 
     @SuppressLint("DefaultLocale")
