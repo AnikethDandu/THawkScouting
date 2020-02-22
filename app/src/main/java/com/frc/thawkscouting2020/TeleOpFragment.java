@@ -22,6 +22,8 @@ import java.util.List;
 
 public class TeleOpFragment extends Fragment {
 
+    Button PENALTIES_BUTTON;
+
     static ArrayList<String> ACTIONS = new ArrayList<>();
 
     static TextView[][] SCORING_LABELS = new TextView[2][3];
@@ -67,7 +69,7 @@ public class TeleOpFragment extends Fragment {
 
         final Button RESET_BUTTON = VIEW.findViewById(R.id.resetButton);
 
-        final Button PENALTIES_BUTTON = VIEW.findViewById(R.id.penaltiesButton);
+        PENALTIES_BUTTON = VIEW.findViewById(R.id.penaltiesButton);
 
         ACTIONS.add("BLOCK");
 
@@ -85,27 +87,7 @@ public class TeleOpFragment extends Fragment {
         RESET_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ACTIONS.clear();
-                ACTIONS.add("Block");
-                penalties = 0;
-                dataViewModel.DefenseOn.setValue(0);
-                PENALTIES_BUTTON.setText(String.format("PENALTIES: %d", penalties));
-                dataViewModel.Penalties.setValue(penalties);
-                dataViewModel.PlayingDefense.setValue(0);
-                dataViewModel.LastCycle.setValue(new String[] {});
-                cycles.clear();
-                scoring_positions.clear();
-                for (int x = 0; x < 2; x++) {
-                    for (int y  = 0; y < 3; y++) {
-                        SCORING[x][y] = 0;
-                        setScoreLabel(x, y);
-                    }
-                }
-                for (int x = 0; x < 6; x++) {
-                    for (int y  = 0; y < 5; y++) {
-                        CyclesWithPositions[x][y] = 0;
-                    }
-                }
+                reset();
             }
         });
 
@@ -252,5 +234,30 @@ public class TeleOpFragment extends Fragment {
         int minutes = Integer.parseInt(time[0]);
         int seconds = Integer.parseInt(time[1]);
         return minutes * 60 + seconds;
+    }
+
+    @SuppressLint("DefaultLocale")
+    void reset() {
+        ACTIONS.clear();
+        ACTIONS.add("Block");
+        penalties = 0;
+        dataViewModel.DefenseOn.setValue(0);
+        PENALTIES_BUTTON.setText(String.format("PENALTIES: %d", penalties));
+        dataViewModel.Penalties.setValue(penalties);
+        dataViewModel.PlayingDefense.setValue(0);
+        dataViewModel.LastCycle.setValue(new String[] {});
+        cycles.clear();
+        scoring_positions.clear();
+        for (int x = 0; x < 2; x++) {
+            for (int y  = 0; y < 3; y++) {
+                SCORING[x][y] = 0;
+                setScoreLabel(x, y);
+            }
+        }
+        for (int x = 0; x < 6; x++) {
+            for (int y  = 0; y < 5; y++) {
+                CyclesWithPositions[x][y] = 0;
+            }
+        }
     }
 }

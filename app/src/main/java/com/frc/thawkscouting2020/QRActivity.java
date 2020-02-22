@@ -1,6 +1,5 @@
 package com.frc.thawkscouting2020;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.Toast;
-import java.util.List;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -18,9 +16,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.lang.ref.WeakReference;
+
 public class QRActivity extends AppCompatActivity{
 
     private DataViewModel dataViewModel;
+    private static WeakReference<MainActivity> mainActivityWeakReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class QRActivity extends AppCompatActivity{
             /* Display the error to the user as a toast */
             Toast.makeText(QRActivity.this, e.toString(), Toast.LENGTH_LONG).show();
         }
+        mainActivityWeakReference.get().reset();
     }
 
     private String convertArray(int[] array) {
@@ -141,5 +143,9 @@ public class QRActivity extends AppCompatActivity{
         /* Return the data as a string */
         System.out.print(WORKING_TEXT.toString());
         return WORKING_TEXT.toString();
+    }
+
+    public static void updateActivity(MainActivity activity) {
+        mainActivityWeakReference = new WeakReference<>(activity);
     }
 }

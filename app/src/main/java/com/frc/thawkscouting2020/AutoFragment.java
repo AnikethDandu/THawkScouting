@@ -13,19 +13,18 @@ import androidx.fragment.app.Fragment;
 
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.EditText;
 import android.widget.Button;
-
 import java.util.ArrayList;
 
-public class AutoFragment extends Fragment {
+public class AutoFragment extends Fragment{
     static String color = "BLUE";
 
     private static DataViewModel dataViewModel;
+    CheckBox CROSSED_LINE_BOX;
 
     private int[] powerCellHit = {0, 0, 0};
     private int[] powerCellMiss = {0, 0};
@@ -65,7 +64,7 @@ public class AutoFragment extends Fragment {
 
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
 
-            final CheckBox CROSSED_LINE_BOX = VIEW.findViewById(R.id.crossedLineCheckbox);
+            CROSSED_LINE_BOX = VIEW.findViewById(R.id.crossedLineCheckbox);
 
             powerCellHitButtons[0] = VIEW.findViewById(R.id.innerAutoButton);
             powerCellHitButtons[1] = VIEW.findViewById(R.id.outerAutoButton);
@@ -214,5 +213,16 @@ public class AutoFragment extends Fragment {
         dataViewModel.AutoHits.setValue(powerCellHit);
         dataViewModel.AutoMiss.setValue(powerCellMiss);
     }
-}
 
+    void reset() {
+        powerCellHit[0] = 0;
+        powerCellHit[1] = 0;
+        powerCellHit[2] = 0;
+        powerCellMiss[0] = 0;
+        powerCellMiss[1] = 0;
+        setButtonLabels();
+        MATCH_EDIT_TEXT.setText("");
+        TEAM_EDIT_TEXT.setText("");
+        setButtonLabels();
+    }
+}

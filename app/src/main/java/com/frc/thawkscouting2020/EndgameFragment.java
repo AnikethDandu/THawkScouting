@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class EndgameFragment extends Fragment {
-
-    private DataViewModel dataViewModel;
     static CheckBox[] CHECKBOXES = new CheckBox[11];
     static EditText NOTES;
     static EditText NAME;
@@ -23,7 +21,6 @@ public class EndgameFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataViewModel = MainActivity.dataViewModel;
 
         final View VIEW =  inflater.inflate(R.layout.endgamefragment_layout, container, false);
 
@@ -53,5 +50,12 @@ public class EndgameFragment extends Fragment {
         });
 
         return VIEW;
+    }
+
+    void reset() {
+        for(int i = 0; i < 11; i++) {
+            CHECKBOXES[i].setChecked(false);
+        }
+        NOTES.setText("");
     }
 }

@@ -1,11 +1,11 @@
 package com.frc.thawkscouting2020;
 
+import android.app.Fragment;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,13 +17,15 @@ import com.frc.thawkscouting2020.ui.main.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
     public static DataViewModel dataViewModel;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        QRActivity.updateActivity(this);
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
@@ -48,5 +50,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+    }
+
+    public void reset() {
+        final AutoFragment autoFragment = (AutoFragment)getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 0);
+        final TeleOpFragment teleOpFragment = (TeleOpFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 1);
+        final EndgameFragment endgameFragment = (EndgameFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + 2);
+        autoFragment.reset();
+        teleOpFragment.reset();
+        endgameFragment.reset();
     }
 }
