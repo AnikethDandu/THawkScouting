@@ -224,7 +224,8 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline12"
         app:layout_constraintEnd_toStartOf="@+id/rightHorizontal"
         app:layout_constraintStart_toStartOf="@+id/leftHorizontal"
-        app:layout_constraintTop_toTopOf="@+id/guideline11" />
+        app:layout_constraintTop_toTopOf="@+id/guideline11"
+        android:buttonTint="#FFFFFF"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline13"
