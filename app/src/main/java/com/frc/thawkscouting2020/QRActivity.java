@@ -40,8 +40,8 @@ public class QRActivity extends AppCompatActivity{
         dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
         dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
         dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[10].isChecked());
-        dataViewModel.ScouterName.setValue(EndgameFragment.NAME.getText().toString());
-        dataViewModel.Notes.setValue(EndgameFragment.NOTES.getText().toString());
+        dataViewModel.ScouterName.setValue((EndgameFragment.NAME.getText().toString()).equals("") ? "No Scouter Name" : EndgameFragment.NAME.getText().toString());
+        dataViewModel.Notes.setValue((EndgameFragment.NOTES.getText().toString()).equals("") ? "No Notes" : EndgameFragment.NOTES.getText().toString());
 
         /* GETS RID OF HEADER */
         try
@@ -101,6 +101,7 @@ public class QRActivity extends AppCompatActivity{
                 cycleString.append(",");
             }
         }
+        cycleString.delete(cycleString.length()-1, cycleString.length());
         return cycleString.toString();
     }
 

@@ -246,6 +246,7 @@ public class TeleOpFragment extends Fragment {
         dataViewModel.Penalties.setValue(penalties);
         dataViewModel.PlayingDefense.setValue(0);
         dataViewModel.LastCycle.setValue(new String[] {});
+        dataViewModel.Cycles.setValue(new int[][] {});
         cycles.clear();
         scoring_positions.clear();
         for (int x = 0; x < 2; x++) {

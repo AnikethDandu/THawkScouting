@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">THawkScouting2020</string>
+    <string name="app_name">T-Hawk Scouting 2020</string>
     <string name="tab_text_1">Autonomous</string>
     <string name="tab_text_2">Tele-Op</string>
     <string name="tab_text_3">Endgame</string>
