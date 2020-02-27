@@ -110,16 +110,16 @@ public class CycleActivity extends AppCompatActivity {
                     CYCLE[4] = String.valueOf(currentCycle.lowMiss);
                     dataViewModel.LastCycle.setValue(CYCLE);
                     for (int  i = 0; i < 5; i++) {
-                        TeleOpFragment.CyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
+                        TeleOpFragment.s_cyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
                     }
                     final int X = TeleOpFragment.SELECTED_BOX[0];
                     final int Y = TeleOpFragment.SELECTED_BOX[1];
                     TeleOpFragment.SCORING_POSITIONS[0] = X;
                     TeleOpFragment.SCORING_POSITIONS[1] = Y;
-                    TeleOpFragment.SCORING[X][Y]++;
+                    TeleOpFragment.s_scoring[X][Y]++;
                     TeleOpFragment.setScoreLabel(X, Y);
                     TeleOpFragment.scoring_positions.add(new int [] {X, Y});
-                    TeleOpFragment.ACTIONS.add("CYCLE");
+                    TeleOpFragment.s_actions.add("CYCLE");
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Please score a shot for this cycle", Toast.LENGTH_SHORT).show();

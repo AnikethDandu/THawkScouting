@@ -106,7 +106,7 @@ public class QRActivity extends AppCompatActivity{
     }
 
     private String returnDataString() {
-        dataViewModel.Cycles.setValue(TeleOpFragment.CyclesWithPositions);
+        dataViewModel.Cycles.setValue(TeleOpFragment.s_cyclesWithPositions);
         final String[] DATA = new String[]{
                 dataViewModel.Team.getValue(),
                 dataViewModel.Match.getValue(),

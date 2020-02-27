@@ -1,7 +1,6 @@
 package com.frc.thawkscouting2020;
 
 import android.app.Fragment;
-import android.icu.text.RelativeDateTimeFormatter;
 import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
@@ -17,7 +16,6 @@ import com.frc.thawkscouting2020.ui.main.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
     public static DataViewModel dataViewModel;
-    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,16 +23,16 @@ public class MainActivity extends AppCompatActivity {
         QRActivity.updateActivity(this);
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
+        final ViewPager VIEW_PAGER = findViewById(R.id.view_pager);
+        VIEW_PAGER.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        tabs.setupWithViewPager(VIEW_PAGER);
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 1) {
-                    TeleOpFragment.changeBackgroundImage(AutoFragment.color, (ImageView) findViewById(R.id.fieldMap));
+                    TeleOpFragment.changeBackgroundImage(AutoFragment.s_color, (ImageView) findViewById(R.id.fieldMap));
                 }
             }
 
