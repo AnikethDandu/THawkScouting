@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
+            public void onTabSelected(@NonNull TabLayout.Tab tab) {
                 if (tab.getPosition() == 1) {
                     TeleOpFragment.changeBackgroundImage(AutoFragment.s_color, (ImageView) findViewById(R.id.fieldMap));
                 }
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
     }
-
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);

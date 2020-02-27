@@ -37,6 +37,7 @@ public class AutoFragment extends Fragment{
     /**
      * The String holding the color of the team
      */
+    @NonNull
     static String s_color = "BLUE";
     /**
      * The integer array holding the number of power cells the team scores in autonomous
@@ -49,10 +50,12 @@ public class AutoFragment extends Fragment{
     /**
      * The array of Buttons for autonomous hits
      */
+    @NonNull
     private Button[] m_powerCellHitButtons = new Button[3];
     /**
      * The array of Buttons for autonomous misses
      */
+    @NonNull
     private Button[] m_powerCellMissButtons = new Button[2];
     /**
      * The Checkbox representing the crossing of the initiation line
@@ -232,22 +235,6 @@ public class AutoFragment extends Fragment{
     }
 
     /**
-     * Set the alliance color based on the state of the toggle button
-     * Set the package private color variable to change the field image
-     * Set the value of the color in the DataViewModel
-     * @param toggleButton the alliance color button
-     */
-    private void setAllianceColor(ToggleButton toggleButton) {
-        toggleButton.setBackgroundColor(
-                toggleButton.isChecked()
-                        ? getResources().getColor(R.color.backgroundRed)
-                        : getResources().getColor(R.color.backgroundBlue)
-        );
-        s_color = toggleButton.isChecked() ? "RED" : "BLUE";
-        m_dataViewModel.Color.setValue(s_color);
-    }
-
-    /**
      * Reset all the buttons and text boxes and update the labels
      */
     void reset() {
@@ -299,5 +286,21 @@ public class AutoFragment extends Fragment{
         m_powerCellMissButtons[1].setText(String.format("LOW: %d", POWER_CELL_MISS[1]));
         m_dataViewModel.AutoHits.setValue(POWER_CELL_HITS);
         m_dataViewModel.AutoMiss.setValue(POWER_CELL_MISS);
+    }
+
+    /**
+     * Set the alliance color based on the state of the toggle button
+     * Set the package private color variable to change the field image
+     * Set the value of the color in the DataViewModel
+     * @param toggleButton the alliance color button
+     */
+    private void setAllianceColor(@NonNull ToggleButton toggleButton) {
+        toggleButton.setBackgroundColor(
+                toggleButton.isChecked()
+                        ? getResources().getColor(R.color.backgroundRed)
+                        : getResources().getColor(R.color.backgroundBlue)
+        );
+        s_color = toggleButton.isChecked() ? "RED" : "BLUE";
+        m_dataViewModel.Color.setValue(s_color);
     }
 }

@@ -1,5 +1,6 @@
 package com.frc.thawkscouting2020;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
@@ -40,8 +41,8 @@ public class QRActivity extends AppCompatActivity{
         dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
         dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
         dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[10].isChecked());
-        dataViewModel.ScouterName.setValue((EndgameFragment.NAME.getText().toString()).equals("") ? "No Scouter Name" : EndgameFragment.NAME.getText().toString());
-        dataViewModel.Notes.setValue((EndgameFragment.NOTES.getText().toString()).equals("") ? "No Notes" : EndgameFragment.NOTES.getText().toString());
+        dataViewModel.ScouterName.setValue((EndgameFragment.s_Name).equals("") ? "No Scouter Name" : EndgameFragment.s_Name);
+        dataViewModel.Notes.setValue((EndgameFragment.s_Notes).equals("") ? "No Notes" : EndgameFragment.s_Notes);
 
         /* GETS RID OF HEADER */
         try
@@ -82,7 +83,7 @@ public class QRActivity extends AppCompatActivity{
         mainActivityWeakReference.get().reset();
     }
 
-    private String convertArray(int[] array) {
+    private String convertArray(@NonNull int[] array) {
         String finalString = "";
         for (int i = 0; i < array.length; i++) {
             finalString += array[i];
@@ -93,6 +94,7 @@ public class QRActivity extends AppCompatActivity{
         return finalString;
     }
 
+    @NonNull
     private String convertCycles(int[][] cycles) {
         StringBuilder cycleString = new StringBuilder();
         for (int i = 0; i < 6; i++) {
@@ -105,8 +107,9 @@ public class QRActivity extends AppCompatActivity{
         return cycleString.toString();
     }
 
+    @NonNull
     private String returnDataString() {
-        dataViewModel.Cycles.setValue(TeleOpFragment.s_cyclesWithPositions);
+        dataViewModel.Cycles.setValue(TeleOpFragment.s_CyclesWithPositions);
         final String[] DATA = new String[]{
                 dataViewModel.Team.getValue(),
                 dataViewModel.Match.getValue(),

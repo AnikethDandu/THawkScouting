@@ -1,24 +1,53 @@
 package com.frc.thawkscouting2020;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.*;
-import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
+/**
+ * Screen that shows up for each cycle scored on Tele-Op tab
+ *
+ * @author Aniketh Dandu - Team 1100
+ */
 public class CycleActivity extends AppCompatActivity {
 
-    private Button[] cycleHitButtons = new Button[3];
-    private Button[] cycleMissButtons = new Button[2];
-    private ArrayList<String> undoActions = new ArrayList<>();
+    /**
+     * Array of buttons for hit buttons
+     */
+    @NonNull
+    private Button[] m_cycleHitButtons = new Button[3];
+    /**
+     * Array of buttons for miss buttons
+     */
+    @NonNull
+    private Button[] m_cycleMissButtons = new Button[2];
+    /**
+     * Array of Strings holding user actions
+     */
+    @NonNull
+    private ArrayList<String> m_userActions = new ArrayList<>();
+    /**
+     * Array of integer values for hits
+     */
     final int[] CYCLE_HIT = {0, 0, 0};
+    /**
+     * Array of integer values for misses
+     */
     final int[] CYCLE_MISS = {0, 0};
-
+    /**
+     * TThe DataViewModel used to store data from this screen
+     */
     private DataViewModel dataViewModel;
 
+    // The method called when the view is created
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +55,7 @@ public class CycleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cycle);
         dataViewModel = MainActivity.dataViewModel;
 
-        /* GETS RID OF HEADER */
+        // Gets rid of header
         try
         {
             this.getSupportActionBar().hide();
@@ -35,65 +64,54 @@ public class CycleActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
-        undoActions.add("BLOCK");
-
-        cycleHitButtons[0] = findViewById(R.id.cycleInnerButton);
-        cycleHitButtons[1] = findViewById(R.id.cycleOuterButton);
-        cycleHitButtons[2] = findViewById(R.id.cycleBottomButton);
-        cycleMissButtons[0] = findViewById(R.id.cycleHighButton);
-        cycleMissButtons[1] = findViewById(R.id.cycleLowerButton);
-
+        // Add a block to the user actions
+        m_userActions.add("BLOCK");
+        // ID the hit and miss buttons
+        m_cycleHitButtons[0] = findViewById(R.id.cycleInnerButton);
+        m_cycleHitButtons[1] = findViewById(R.id.cycleOuterButton);
+        m_cycleHitButtons[2] = findViewById(R.id.cycleBottomButton);
+        m_cycleMissButtons[0] = findViewById(R.id.cycleHighButton);
+        m_cycleMissButtons[1] = findViewById(R.id.cycleLowerButton);
+        // Default the button labels
         setButtonLabels();
 
-        cycleHitButtons[0].setOnClickListener(new View.OnClickListener() {
+        // When a hit or miss button is clicked, increment the value, update the DataViewModel, and update the labels
+        m_cycleHitButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                CYCLE_HIT[0]++;
-                undoActions.add("Hit0");
-                setButtonLabels();
+                addHit(0);
             }
         });
 
-        cycleHitButtons[1].setOnClickListener(new View.OnClickListener() {
+        m_cycleHitButtons[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CYCLE_HIT[1]++;
-                undoActions.add("Hit1");
-                setButtonLabels();
+                addHit(1);
             }
         });
 
-        cycleHitButtons[2].setOnClickListener(new View.OnClickListener() {
+        m_cycleHitButtons[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                CYCLE_HIT[2]++;
-                undoActions.add("Hit2");
-                setButtonLabels();
+                addHit(2);
             }
         });
 
-        cycleMissButtons[0].setOnClickListener(new View.OnClickListener() {
+        m_cycleMissButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                CYCLE_MISS[0]++;
-                undoActions.add("Miss0");
-                setButtonLabels();
+                addMiss(0);
             }
         });
 
-        cycleMissButtons[1].setOnClickListener(new View.OnClickListener() {
+        m_cycleMissButtons[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                CYCLE_MISS[1]++;
-                undoActions.add("Miss1");
-                setButtonLabels();
+                addMiss(1);
             }
         });
 
+        // When the accept button is pressed, send the data to the Tele-Op screen
         final Button ACCEPT_BUTTON = findViewById(R.id.acceptButton);
         ACCEPT_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +119,7 @@ public class CycleActivity extends AppCompatActivity {
                 final int SHOTS = CYCLE_HIT[0] + CYCLE_HIT[1] + CYCLE_HIT[2] + CYCLE_MISS[0] + CYCLE_MISS[1];
                 if (SHOTS > 0) {
                     Cycle currentCycle = new Cycle(CYCLE_HIT[0], CYCLE_HIT[1], CYCLE_HIT[2], CYCLE_MISS[0], CYCLE_MISS[1]);
-                    TeleOpFragment.cycles.add(currentCycle);
+                    TeleOpFragment.s_Cycles.add(currentCycle);
                     final String[] CYCLE = new String[5];
                     CYCLE[0] = String.valueOf(currentCycle.innerHit);
                     CYCLE[1] = String.valueOf(currentCycle.outerHit);
@@ -110,15 +128,15 @@ public class CycleActivity extends AppCompatActivity {
                     CYCLE[4] = String.valueOf(currentCycle.lowMiss);
                     dataViewModel.LastCycle.setValue(CYCLE);
                     for (int  i = 0; i < 5; i++) {
-                        TeleOpFragment.s_cyclesWithPositions[(TeleOpFragment.SCORING_POSITIONS[0] + TeleOpFragment.SCORING_POSITIONS[1]*2)][i] = Integer.valueOf(CYCLE[i]);
+                        TeleOpFragment.s_CyclesWithPositions[(TeleOpFragment.s_scoringPositions[0] + TeleOpFragment.s_scoringPositions[1]*2)][i] = Integer.valueOf(CYCLE[i]);
                     }
-                    final int X = TeleOpFragment.SELECTED_BOX[0];
-                    final int Y = TeleOpFragment.SELECTED_BOX[1];
-                    TeleOpFragment.SCORING_POSITIONS[0] = X;
-                    TeleOpFragment.SCORING_POSITIONS[1] = Y;
-                    TeleOpFragment.s_scoring[X][Y]++;
+                    final int X = TeleOpFragment.s_SelectedBox[0];
+                    final int Y = TeleOpFragment.s_SelectedBox[1];
+                    TeleOpFragment.s_scoringPositions[0] = X;
+                    TeleOpFragment.s_scoringPositions[1] = Y;
+                    TeleOpFragment.s_Scoring[X][Y]++;
                     TeleOpFragment.setScoreLabel(X, Y);
-                    TeleOpFragment.scoring_positions.add(new int [] {X, Y});
+                    TeleOpFragment.s_ScoringPositions.add(new int [] {X, Y});
                     TeleOpFragment.s_actions.add("CYCLE");
                     finish();
                 } else {
@@ -153,25 +171,51 @@ public class CycleActivity extends AppCompatActivity {
 
     @SuppressLint("DefaultLocale")
     private void setButtonLabels() {
-        cycleHitButtons[0].setText(String.format("INNER: %d", CYCLE_HIT[0]));
-        cycleHitButtons[1].setText(String.format("OUTER: %d", CYCLE_HIT[1]));
-        cycleHitButtons[2].setText(String.format("BOTTOM: %d", CYCLE_HIT[2]));
-        cycleMissButtons[0].setText(String.format("HIGH: %d", CYCLE_MISS[0]));
-        cycleMissButtons[1].setText(String.format("LOW: %d", CYCLE_MISS[1]));
+        m_cycleHitButtons[0].setText(String.format("INNER: %d", CYCLE_HIT[0]));
+        m_cycleHitButtons[1].setText(String.format("OUTER: %d", CYCLE_HIT[1]));
+        m_cycleHitButtons[2].setText(String.format("BOTTOM: %d", CYCLE_HIT[2]));
+        m_cycleMissButtons[0].setText(String.format("HIGH: %d", CYCLE_MISS[0]));
+        m_cycleMissButtons[1].setText(String.format("LOW: %d", CYCLE_MISS[1]));
     }
 
     private void undoAction() {
-        final String LAST_ACTION = undoActions.get(undoActions.size()-1);
+        final String LAST_ACTION = m_userActions.get(m_userActions.size()-1);
         final String ACTION = LAST_ACTION.substring(0, 3);
         if (!LAST_ACTION.equals("BLOCK")) {
             final int INDEX = Integer.valueOf(LAST_ACTION.substring(LAST_ACTION.length()-1));
-            if (ACTION.equals("Hit")) {
+            if (ACTION.equals("hit")) {
                 CYCLE_HIT[INDEX]--;
             } else {
                 CYCLE_MISS[INDEX]--;
             }
             setButtonLabels();
-            undoActions.remove(LAST_ACTION);
+            m_userActions.remove(LAST_ACTION);
         }
+    }
+
+    /**
+     * Increment the hit value of the corresponding score button
+     * Set the labels
+     * Add an entry to the user actions
+     * @param i The index of the button
+     */
+    @SuppressLint("DefaultLocale")
+    private void addHit(int i) {
+        CYCLE_HIT[i]++;
+        setButtonLabels();
+        m_userActions.add(String.format("hit%d",i));
+    }
+
+    /**
+     * Increment the miss value of the corresponding score button
+     * Set the labels
+     * Add an entry to the user actions
+     * @param i The index of the button
+     */
+    @SuppressLint("DefaultLocale")
+    private void addMiss(int i) {
+        CYCLE_HIT[i]++;
+        setButtonLabels();
+        m_userActions.add(String.format("miss%d",i));
     }
 }

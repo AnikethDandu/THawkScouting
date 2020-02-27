@@ -26,36 +26,44 @@ public class TeleOpFragment extends Fragment {
 
     private Button m_penaltiesButton;
 
+    @NonNull
     static ArrayList<String> s_actions = new ArrayList<>();
 
+    @NonNull
     private static TextView[][] s_scoringLabels = new TextView[2][3];
-    static int[][] s_scoring = new int[2][3];
-    static int[][] s_cyclesWithPositions = new int[6][5];
+    @NonNull
+    static int[][] s_Scoring = new int[2][3];
+    @NonNull
+    static int[][] s_CyclesWithPositions = new int[6][5];
 
-    static List<Cycle> cycles = new ArrayList<>();
-    static List<int[]> scoring_positions = new ArrayList<>();
+    @NonNull
+    static List<Cycle> s_Cycles = new ArrayList<>();
+    @NonNull
+    static List<int[]> s_ScoringPositions = new ArrayList<>();
 
     final private ArrayList<Integer> VERTICAL_LINES = new ArrayList<>();
     final private ArrayList<Integer> HORIZONTAL_LINES = new ArrayList<>();
 
-    static int[] SELECTED_BOX  = {0, 0};
+    @NonNull
+    static int[] s_SelectedBox = {0, 0};
 
-    private int FIELD_HEIGHT;
-    private int FIELD_WIDTH;
+    private int m_fieldHeight;
+    private int m_fieldWidth;
 
-    private long timeElapsedOn, timeElapsedAgainst;
+    private long m_timeElapsedOn, m_timeElapsedAgainst;
 
-    private int penalties = 0;
+    private int m_penalties = 0;
 
-    static int[] SCORING_POSITIONS = {0, 0};
+    @NonNull
+    static int[] s_scoringPositions = {0, 0};
 
-    private DataViewModel dataViewModel;
+    private DataViewModel m_dataViewModel;
 
     @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataViewModel = MainActivity.dataViewModel;
+        m_dataViewModel = MainActivity.dataViewModel;
         final View VIEW = inflater.inflate(R.layout.teleopfragment_layout, container, false);
 
         final ImageView MAP = VIEW.findViewById(R.id.fieldMap);
@@ -82,9 +90,9 @@ public class TeleOpFragment extends Fragment {
         s_scoringLabels[1][1] = VIEW.findViewById(R.id.label11);
         s_scoringLabels[1][2] = VIEW.findViewById(R.id.label12);
 
-        dataViewModel.DefenseOn.setValue(0);
-        dataViewModel.PlayingDefense.setValue(0);
-        dataViewModel.Penalties.setValue(penalties);
+        m_dataViewModel.DefenseOn.setValue(0);
+        m_dataViewModel.PlayingDefense.setValue(0);
+        m_dataViewModel.Penalties.setValue(m_penalties);
 
         RESET_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,33 +107,31 @@ public class TeleOpFragment extends Fragment {
                 final String LAST_ACTION = s_actions.get(s_actions.size()-1);
                 switch (LAST_ACTION) {
                     case "CYCLE":
-                        if (!cycles.isEmpty()) {
-                            final Cycle LAST_CYCLE = cycles.get(cycles.size()-1);
+                        if (!s_Cycles.isEmpty()) {
+                            final Cycle LAST_CYCLE = s_Cycles.get(s_Cycles.size()-1);
                             final int[] LAST_NUMBERS = new int[5];
                             LAST_NUMBERS[0] = LAST_CYCLE.innerHit;
                             LAST_NUMBERS[1] = LAST_CYCLE.outerHit;
                             LAST_NUMBERS[2] = LAST_CYCLE.bottomHit;
                             LAST_NUMBERS[3] = LAST_CYCLE.highMiss;
                             LAST_NUMBERS[4] = LAST_CYCLE.lowMiss;
-                            final int[] last_pos = scoring_positions.get(scoring_positions.size()-1);
-                            final int[] pos= {last_pos[0], last_pos[1]};
-                            final int X = scoring_positions.get(scoring_positions.size()-1)[0];
-                            final int Y = scoring_positions.get(scoring_positions.size()-1)[1];
-                            s_scoring[X][Y]--;
+                            final int X = s_ScoringPositions.get(s_ScoringPositions.size()-1)[0];
+                            final int Y = s_ScoringPositions.get(s_ScoringPositions.size()-1)[1];
+                            s_Scoring[X][Y]--;
                             setScoreLabel(X, Y);
                             for (int i = 0; i < 5; i++) {
-                                s_cyclesWithPositions[X+2*Y][i] -= LAST_NUMBERS[i];
+                                s_CyclesWithPositions[X+2*Y][i] -= LAST_NUMBERS[i];
                             }
-                            scoring_positions.remove(scoring_positions.size()-1);
-                            cycles.remove(cycles.size()-1);
+                            s_ScoringPositions.remove(s_ScoringPositions.size()-1);
+                            s_Cycles.remove(s_Cycles.size()-1);
                         }
                         s_actions.remove(LAST_ACTION);
                         break;
                     case "PENALTY":
-                        penalties--;
+                        m_penalties--;
                         s_actions.remove(LAST_ACTION);
-                        m_penaltiesButton.setText(String.format("PENALTIES: %d", penalties));
-                        dataViewModel.Penalties.setValue(penalties);
+                        m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
+                        m_dataViewModel.Penalties.setValue(m_penalties);
                         break;
                     default:
                         break;
@@ -135,21 +141,21 @@ public class TeleOpFragment extends Fragment {
 
         MAP.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
+            public boolean onTouch(View view, @NonNull MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     final float X_PT = motionEvent.getX();
                     final float Y_PT = motionEvent.getY();
 
                     for (Integer line: VERTICAL_LINES) {
                         if (X_PT < line) {
-                            SELECTED_BOX[0] = VERTICAL_LINES.indexOf(line);
+                            s_SelectedBox[0] = VERTICAL_LINES.indexOf(line);
                             break;
                         }
                     }
 
                     for (Integer line: HORIZONTAL_LINES) {
                         if (Y_PT < line) {
-                            SELECTED_BOX[1] = HORIZONTAL_LINES.indexOf(line);
+                            s_SelectedBox[1] = HORIZONTAL_LINES.indexOf(line);
                             break;
                         }
                     }
@@ -164,12 +170,12 @@ public class TeleOpFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (ON_DEFENSE_BOX.isChecked()) {
-                    ON_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - timeElapsedOn);
+                    ON_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - m_timeElapsedOn);
                     ON_DEFENSE_TIMER.start();
                 } else {
-                    timeElapsedOn = SystemClock.elapsedRealtime() - ON_DEFENSE_TIMER.getBase();
+                    m_timeElapsedOn = SystemClock.elapsedRealtime() - ON_DEFENSE_TIMER.getBase();
                     ON_DEFENSE_TIMER.stop();
-                    dataViewModel.DefenseOn.setValue(returnChronometerTime(ON_DEFENSE_TIMER));
+                    m_dataViewModel.DefenseOn.setValue(returnChronometerTime(ON_DEFENSE_TIMER));
                 }
             }
         });
@@ -178,12 +184,12 @@ public class TeleOpFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (PLAYING_DEFENSE_BOX.isChecked()) {
-                    PLAYING_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - timeElapsedAgainst);
+                    PLAYING_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - m_timeElapsedAgainst);
                     PLAYING_DEFENSE_TIMER.start();
                 } else {
-                    timeElapsedAgainst = SystemClock.elapsedRealtime() - PLAYING_DEFENSE_TIMER.getBase();
+                    m_timeElapsedAgainst = SystemClock.elapsedRealtime() - PLAYING_DEFENSE_TIMER.getBase();
                     PLAYING_DEFENSE_TIMER.stop();
-                    dataViewModel.PlayingDefense.setValue(returnChronometerTime(PLAYING_DEFENSE_TIMER));
+                    m_dataViewModel.PlayingDefense.setValue(returnChronometerTime(PLAYING_DEFENSE_TIMER));
                 }
             }
         });
@@ -193,32 +199,32 @@ public class TeleOpFragment extends Fragment {
             public void onGlobalLayout() {
 
                 // TODO: ADD WAY TO CUSTOMIZE GRID LAYOUT + ADDING GRID LINES
-                FIELD_WIDTH = MAP.getWidth();
-                FIELD_HEIGHT = MAP.getHeight();
+                m_fieldWidth = MAP.getWidth();
+                m_fieldHeight = MAP.getHeight();
 
-                VERTICAL_LINES.add(FIELD_WIDTH / 2);
-                VERTICAL_LINES.add(FIELD_WIDTH);
+                VERTICAL_LINES.add(m_fieldWidth / 2);
+                VERTICAL_LINES.add(m_fieldWidth);
 
-                HORIZONTAL_LINES.add(FIELD_HEIGHT / 3);
-                HORIZONTAL_LINES.add(FIELD_HEIGHT * 2 / 3);
-                HORIZONTAL_LINES.add(FIELD_HEIGHT);
+                HORIZONTAL_LINES.add(m_fieldHeight / 3);
+                HORIZONTAL_LINES.add(m_fieldHeight * 2 / 3);
+                HORIZONTAL_LINES.add(m_fieldHeight);
             }
         });
 
         m_penaltiesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                penalties++;
+                m_penalties++;
                 s_actions.add("PENALTY");
-                m_penaltiesButton.setText(String.format("PENALTIES: %d", penalties));
-                dataViewModel.Penalties.setValue(penalties);
+                m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
+                m_dataViewModel.Penalties.setValue(m_penalties);
             }
         });
 
         return VIEW;
     }
 
-    static void changeBackgroundImage(String color, ImageView map) {
+    static void changeBackgroundImage(@NonNull String color, @NonNull ImageView map) {
         if (color.equals("BLUE")) {
             map.setImageResource(R.drawable.blue_field2);
         } else {
@@ -227,10 +233,10 @@ public class TeleOpFragment extends Fragment {
     }
 
     static void setScoreLabel(int x, int y) {
-        s_scoringLabels[x][y].setText(String.valueOf(s_scoring[x][y]));
+        s_scoringLabels[x][y].setText(String.valueOf(s_Scoring[x][y]));
     }
 
-    private int returnChronometerTime(Chronometer c) {
+    private int returnChronometerTime(@NonNull Chronometer c) {
         String[] time = c.getText().toString().split(":");
         int minutes = Integer.parseInt(time[0]);
         int seconds = Integer.parseInt(time[1]);
@@ -241,24 +247,24 @@ public class TeleOpFragment extends Fragment {
     void reset() {
         s_actions.clear();
         s_actions.add("Block");
-        penalties = 0;
-        dataViewModel.DefenseOn.setValue(0);
-        m_penaltiesButton.setText(String.format("PENALTIES: %d", penalties));
-        dataViewModel.Penalties.setValue(penalties);
-        dataViewModel.PlayingDefense.setValue(0);
-        dataViewModel.LastCycle.setValue(new String[] {});
-        dataViewModel.Cycles.setValue(new int[][] {});
-        cycles.clear();
-        scoring_positions.clear();
+        m_penalties = 0;
+        m_dataViewModel.DefenseOn.setValue(0);
+        m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
+        m_dataViewModel.Penalties.setValue(m_penalties);
+        m_dataViewModel.PlayingDefense.setValue(0);
+        m_dataViewModel.LastCycle.setValue(new String[] {});
+        m_dataViewModel.Cycles.setValue(new int[][] {});
+        s_Cycles.clear();
+        s_ScoringPositions.clear();
         for (int x = 0; x < 2; x++) {
             for (int y  = 0; y < 3; y++) {
-                s_scoring[x][y] = 0;
+                s_Scoring[x][y] = 0;
                 setScoreLabel(x, y);
             }
         }
         for (int x = 0; x < 6; x++) {
             for (int y  = 0; y < 5; y++) {
-                s_cyclesWithPositions[x][y] = 0;
+                s_CyclesWithPositions[x][y] = 0;
             }
         }
     }
