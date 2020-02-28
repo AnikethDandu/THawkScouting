@@ -214,7 +214,7 @@ public class CycleActivity extends AppCompatActivity {
      */
     @SuppressLint("DefaultLocale")
     private void addMiss(int i) {
-        CYCLE_HIT[i]++;
+        CYCLE_MISS[i]++;
         setButtonLabels();
         m_userActions.add(String.format("miss%d",i));
     }
