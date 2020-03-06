@@ -59,6 +59,12 @@ public class TeleOpFragment extends Fragment {
 
     private DataViewModel m_dataViewModel;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
     @Nullable
     @Override

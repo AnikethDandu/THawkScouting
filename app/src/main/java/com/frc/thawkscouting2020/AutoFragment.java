@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +76,12 @@ public class AutoFragment extends Fragment{
      */
     private EditText m_teamEditText;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,9 +90,6 @@ public class AutoFragment extends Fragment{
         // ID the text boxes
         m_matchEditText = VIEW.findViewById(R.id.matchTextbox);
         m_teamEditText = VIEW.findViewById(R.id.teamTextbox);
-        // Make the cursor invisible for the text boxes
-        m_matchEditText.setCursorVisible(false);
-        m_teamEditText.setCursorVisible(false);
         // return the view
         return VIEW;
     }
@@ -100,6 +105,8 @@ public class AutoFragment extends Fragment{
             final ToggleButton ALLIANCE_COLOR_BUTTON = VIEW.findViewById(R.id.allianceButton);
             final Button UNDO_BUTTON = getView().findViewById(R.id.autoUndoButton);
             final RadioGroup DRIVER_STATION_GROUP = VIEW.findViewById(R.id.driverStationGroup);
+            final EditText TEAM_EDIT_TEXT = VIEW.findViewById(R.id.teamTextbox);
+            final EditText MATCH_EDIT_TEXT = VIEW.findViewById(R.id.matchTextbox);
             m_crossedLineCheckbox = VIEW.findViewById(R.id.crossedLineCheckbox);
             m_powerCellHitButtons[0] = VIEW.findViewById(R.id.innerAutoButton);
             m_powerCellHitButtons[1] = VIEW.findViewById(R.id.outerAutoButton);
@@ -118,7 +125,43 @@ public class AutoFragment extends Fragment{
             m_dataViewModel.Match.setValue(m_matchEditText.getText().toString());
             m_dataViewModel.Station.setValue(1);
             m_dataViewModel.CrossedLine.setValue(m_crossedLineCheckbox.isChecked());
+
+            m_teamEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    m_dataViewModel.Team.setValue(s.toString());
+                }
+            });
+
+            m_matchEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    m_dataViewModel.Match.setValue(s.toString());
+                }
+            });
+
             // When the checkbox is toggled, set the value in the DataViewModel
+
             m_crossedLineCheckbox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

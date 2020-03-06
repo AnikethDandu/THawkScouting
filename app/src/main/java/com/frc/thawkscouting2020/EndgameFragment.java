@@ -38,6 +38,12 @@ public class EndgameFragment extends Fragment {
      */
     private EditText m_notes;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     // Method for when the view is created
     @Nullable
     @Override
