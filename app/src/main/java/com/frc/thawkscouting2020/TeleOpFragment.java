@@ -13,51 +13,37 @@ import android.view.ViewGroup;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.CheckBox;
 import android.widget.Chronometer;
+
+import com.frc.thawkscouting2020.databinding.TeleopfragmentLayoutBinding;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TeleOpFragment extends Fragment {
 
-    private Button m_penaltiesButton;
+    // TODO: Clean up code
 
-    @NonNull
-    static ArrayList<String> s_actions = new ArrayList<>();
+    ArrayList<String> UserActions = new ArrayList<String>() {};
+    private final TextView[][] SCORING_LABELS = new TextView[2][3];
 
-    @NonNull
-    private static TextView[][] s_scoringLabels = new TextView[2][3];
-    @NonNull
-    static int[][] s_Scoring = new int[2][3];
-    @NonNull
-    static int[][] s_CyclesWithPositions = new int[6][5];
-
-    @NonNull
-    static List<Cycle> s_Cycles = new ArrayList<>();
-    @NonNull
-    static List<int[]> s_ScoringPositions = new ArrayList<>();
+    int[][] CyclesScored = new int[2][3];
+    int[][] CyclesWithPositions = new int[6][5];
+    List<Cycle> CyclesList = new ArrayList<>();
+    List<int[]> ScoringPositions = new ArrayList<>();
+    int[] SelectedBox = {0, 0};
 
     final private ArrayList<Integer> VERTICAL_LINES = new ArrayList<>();
     final private ArrayList<Integer> HORIZONTAL_LINES = new ArrayList<>();
-
-    @NonNull
-    static int[] s_SelectedBox = {0, 0};
-
     private int m_fieldHeight;
     private int m_fieldWidth;
-
     private long m_timeElapsedOn, m_timeElapsedAgainst;
-
     private int m_penalties = 0;
-
-    @NonNull
-    static int[] s_scoringPositions = {0, 0};
-
     private DataViewModel m_dataViewModel;
+    private WeakReference<MainActivity> m_mainWeakReference;
+    private TeleopfragmentLayoutBinding m_binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,213 +51,191 @@ public class TeleOpFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    @SuppressLint({"ClickableViewAccessibility", "DefaultLocale"})
+    @SuppressLint({"ClickableViewAccessibility", "DefaultLocale", "SetTextI18n"})
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        m_dataViewModel = MainActivity.dataViewModel;
-        final View VIEW = inflater.inflate(R.layout.teleopfragment_layout, container, false);
+        m_dataViewModel = m_mainWeakReference.get().dataViewModel;
+        m_binding = TeleopfragmentLayoutBinding.inflate(inflater);
 
-        final ImageView MAP = VIEW.findViewById(R.id.fieldMap);
-        final ViewTreeObserver TREE = MAP.getViewTreeObserver();
+        UserActions.add("Block");
 
-        final Chronometer PLAYING_DEFENSE_TIMER = VIEW.findViewById(R.id.againstChronometer);
-        final Chronometer ON_DEFENSE_TIMER = VIEW.findViewById(R.id.onChronometer);
-
-        final CheckBox PLAYING_DEFENSE_BOX = VIEW.findViewById(R.id.playingDefenseTimer);
-        final CheckBox ON_DEFENSE_BOX = VIEW.findViewById(R.id.onDefenseTimer);
-
-        final Button UNDO_BUTTON = VIEW.findViewById(R.id.teleUndoButton);
-
-        final Button RESET_BUTTON = VIEW.findViewById(R.id.resetButton);
-
-        m_penaltiesButton = VIEW.findViewById(R.id.penaltiesButton);
-
-        s_actions.add("BLOCK");
-
-        s_scoringLabels[0][0] = VIEW.findViewById(R.id.label00);
-        s_scoringLabels[0][1] = VIEW.findViewById(R.id.label01);
-        s_scoringLabels[0][2] = VIEW.findViewById(R.id.label02);
-        s_scoringLabels[1][0] = VIEW.findViewById(R.id.label10);
-        s_scoringLabels[1][1] = VIEW.findViewById(R.id.label11);
-        s_scoringLabels[1][2] = VIEW.findViewById(R.id.label12);
+        SCORING_LABELS[0][0] = m_binding.label00;
+        SCORING_LABELS[0][1] = m_binding.label01;
+        SCORING_LABELS[0][2] = m_binding.label02;
+        SCORING_LABELS[1][0] = m_binding.label10;
+        SCORING_LABELS[1][1] = m_binding.label11;
+        SCORING_LABELS[1][2] = m_binding.label12;
 
         m_dataViewModel.DefenseOn.setValue(0);
         m_dataViewModel.PlayingDefense.setValue(0);
-        m_dataViewModel.Penalties.setValue(m_penalties);
+        setPenalties();
 
-        RESET_BUTTON.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                reset();
-            }
-        });
+        m_binding.resetButton.setOnClickListener((View view) -> reset());
 
-        UNDO_BUTTON.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String LAST_ACTION = s_actions.get(s_actions.size()-1);
-                switch (LAST_ACTION) {
-                    case "CYCLE":
-                        if (!s_Cycles.isEmpty()) {
-                            final Cycle LAST_CYCLE = s_Cycles.get(s_Cycles.size()-1);
-                            final int[] LAST_NUMBERS = new int[5];
-                            LAST_NUMBERS[0] = LAST_CYCLE.innerHit;
-                            LAST_NUMBERS[1] = LAST_CYCLE.outerHit;
-                            LAST_NUMBERS[2] = LAST_CYCLE.bottomHit;
-                            LAST_NUMBERS[3] = LAST_CYCLE.highMiss;
-                            LAST_NUMBERS[4] = LAST_CYCLE.lowMiss;
-                            final int X = s_ScoringPositions.get(s_ScoringPositions.size()-1)[0];
-                            final int Y = s_ScoringPositions.get(s_ScoringPositions.size()-1)[1];
-                            s_Scoring[X][Y]--;
-                            setScoreLabel(X, Y);
-                            for (int i = 0; i < 5; i++) {
-                                s_CyclesWithPositions[X+2*Y][i] -= LAST_NUMBERS[i];
-                            }
-                            s_ScoringPositions.remove(s_ScoringPositions.size()-1);
-                            s_Cycles.remove(s_Cycles.size()-1);
+        m_binding.teleUndoButton.setOnClickListener((View view) -> {
+            final String LAST_ACTION = UserActions.get(UserActions.size()-1);
+            switch (LAST_ACTION) {
+                case "CYCLE":
+                    if (!CyclesList.isEmpty()) {
+                        final Cycle LAST_CYCLE = CyclesList.get(CyclesList.size()-1);
+                        final int[] LAST_NUMBERS = {
+                                LAST_CYCLE.innerHit, LAST_CYCLE.outerHit, LAST_CYCLE.bottomHit,
+                                LAST_CYCLE.highMiss, LAST_CYCLE.lowMiss
+                        };
+                        final int X = ScoringPositions.get(ScoringPositions.size()-1)[0];
+                        final int Y = ScoringPositions.get(ScoringPositions.size()-1)[1];
+                        CyclesScored[X][Y]--;
+                        setScoreLabel(X, Y);
+                        for (int i = 0; i < 5; i++) {
+                            CyclesWithPositions[X+(2*Y)][i] -= LAST_NUMBERS[i];
                         }
-                        s_actions.remove(LAST_ACTION);
-                        break;
-                    case "PENALTY":
-                        m_penalties--;
-                        s_actions.remove(LAST_ACTION);
-                        m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
-                        m_dataViewModel.Penalties.setValue(m_penalties);
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-
-        MAP.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, @NonNull MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    final float X_PT = motionEvent.getX();
-                    final float Y_PT = motionEvent.getY();
-
-                    for (Integer line: VERTICAL_LINES) {
-                        if (X_PT < line) {
-                            s_SelectedBox[0] = VERTICAL_LINES.indexOf(line);
-                            break;
-                        }
+                        ScoringPositions.remove(ScoringPositions.size()-1);
+                        CyclesList.remove(CyclesList.size()-1);
                     }
+                    UserActions.remove(UserActions.size()-1);
+                    break;
+                case "PENALTY":
+                    incrementPenalties(false);
+                    break;
+                default:
+                    break;
+            }
+        });
 
-                    for (Integer line: HORIZONTAL_LINES) {
-                        if (Y_PT < line) {
-                            s_SelectedBox[1] = HORIZONTAL_LINES.indexOf(line);
-                            break;
-                        }
+        m_binding.fieldMap.setOnTouchListener((View view, MotionEvent motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                final float X_PT = motionEvent.getX();
+                final float Y_PT = motionEvent.getY();
+
+                for (Integer line: VERTICAL_LINES) {
+                    if (X_PT < line) {
+                        SelectedBox[0] = VERTICAL_LINES.indexOf(line);
+                        break;
                     }
-                    final Intent CYCLE_INTENT = new Intent(getActivity(), CycleActivity.class);
-                    startActivity(CYCLE_INTENT);
                 }
-                return false;
-            }
-        });
 
-        ON_DEFENSE_BOX.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (ON_DEFENSE_BOX.isChecked()) {
-                    ON_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - m_timeElapsedOn);
-                    ON_DEFENSE_TIMER.start();
-                } else {
-                    m_timeElapsedOn = SystemClock.elapsedRealtime() - ON_DEFENSE_TIMER.getBase();
-                    ON_DEFENSE_TIMER.stop();
-                    m_dataViewModel.DefenseOn.setValue(returnChronometerTime(ON_DEFENSE_TIMER));
+                for (Integer line: HORIZONTAL_LINES) {
+                    if (Y_PT < line) {
+                        SelectedBox[1] = HORIZONTAL_LINES.indexOf(line);
+                        break;
+                    }
                 }
+                final Intent CYCLE_INTENT = new Intent(getActivity(), CycleActivity.class);
+                startActivity(CYCLE_INTENT);
+            }
+            return false;
+        });
+
+        m_binding.onDefenseTimer.setOnClickListener((View view) -> {
+            if (m_binding.onDefenseTimer.isChecked()) {
+                m_binding.onChronometer.setBase(SystemClock.elapsedRealtime() - m_timeElapsedOn);
+                m_binding.onChronometer.start();
+            } else {
+                m_timeElapsedOn = SystemClock.elapsedRealtime() - m_binding.onChronometer.getBase();
+                m_binding.onChronometer.stop();
+                m_dataViewModel.DefenseOn.setValue(returnChronometerTime(m_binding.onChronometer));
             }
         });
 
-        PLAYING_DEFENSE_BOX.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (PLAYING_DEFENSE_BOX.isChecked()) {
-                    PLAYING_DEFENSE_TIMER.setBase(SystemClock.elapsedRealtime() - m_timeElapsedAgainst);
-                    PLAYING_DEFENSE_TIMER.start();
-                } else {
-                    m_timeElapsedAgainst = SystemClock.elapsedRealtime() - PLAYING_DEFENSE_TIMER.getBase();
-                    PLAYING_DEFENSE_TIMER.stop();
-                    m_dataViewModel.PlayingDefense.setValue(returnChronometerTime(PLAYING_DEFENSE_TIMER));
-                }
+        m_binding.playingDefenseTimer.setOnClickListener((View view) -> {
+            if (m_binding.playingDefenseTimer.isChecked()) {
+                m_binding.againstChronometer.setBase(SystemClock.elapsedRealtime() - m_timeElapsedAgainst);
+                m_binding.againstChronometer.start();
+            } else {
+                m_timeElapsedAgainst = SystemClock.elapsedRealtime() - m_binding.againstChronometer.getBase();
+                m_binding.againstChronometer.stop();
+                m_dataViewModel.PlayingDefense.setValue(returnChronometerTime(m_binding.againstChronometer));
             }
         });
 
-        TREE.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+        m_binding.fieldMap.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            m_fieldWidth = m_binding.fieldMap.getWidth();
+            m_fieldHeight = m_binding.fieldMap.getHeight();
 
-                // TODO: ADD WAY TO CUSTOMIZE GRID LAYOUT + ADDING GRID LINES
-                m_fieldWidth = MAP.getWidth();
-                m_fieldHeight = MAP.getHeight();
+            VERTICAL_LINES.add(m_fieldWidth / 2);
+            VERTICAL_LINES.add(m_fieldWidth);
 
-                VERTICAL_LINES.add(m_fieldWidth / 2);
-                VERTICAL_LINES.add(m_fieldWidth);
-
-                HORIZONTAL_LINES.add(m_fieldHeight / 3);
-                HORIZONTAL_LINES.add(m_fieldHeight * 2 / 3);
-                HORIZONTAL_LINES.add(m_fieldHeight);
-            }
+            HORIZONTAL_LINES.add(m_fieldHeight / 3);
+            HORIZONTAL_LINES.add(m_fieldHeight * 2 / 3);
+            HORIZONTAL_LINES.add(m_fieldHeight);
         });
 
-        m_penaltiesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                m_penalties++;
-                s_actions.add("PENALTY");
-                m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
-                m_dataViewModel.Penalties.setValue(m_penalties);
-            }
-        });
-
-        return VIEW;
+        m_binding.penaltiesButton.setOnClickListener((View view) -> incrementPenalties(true));
+        return m_binding.getRoot();
     }
 
-    static void changeBackgroundImage(@NonNull String color, @NonNull ImageView map) {
-        if (color.equals("BLUE")) {
-            map.setImageResource(R.drawable.blue_field2);
-        } else {
-            map.setImageResource(R.drawable.red_field2);
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        m_binding = null;
     }
 
-    static void setScoreLabel(int x, int y) {
-        s_scoringLabels[x][y].setText(String.valueOf(s_Scoring[x][y]));
+    void changeBackgroundImage(String color) {
+        m_binding.fieldMap.setImageResource((color.equals("BLUE"))
+                ? R.drawable.blue_field2 : R.drawable.red_field2);
     }
 
-    private int returnChronometerTime(@NonNull Chronometer c) {
+    void setScoreLabel(int x, int y) {
+        SCORING_LABELS[x][y].setText(String.valueOf(CyclesScored[x][y]));
+    }
+
+    private int returnChronometerTime( Chronometer c) {
         String[] time = c.getText().toString().split(":");
         int minutes = Integer.parseInt(time[0]);
         int seconds = Integer.parseInt(time[1]);
         return minutes * 60 + seconds;
     }
 
-    @SuppressLint("DefaultLocale")
-    void reset() {
-        s_actions.clear();
-        s_actions.add("Block");
-        m_penalties = 0;
-        m_dataViewModel.DefenseOn.setValue(0);
-        m_penaltiesButton.setText(String.format("PENALTIES: %d", m_penalties));
+    @SuppressLint("SetTextI18n")
+    private void incrementPenalties(boolean increment) {
+        if (increment) {
+            m_penalties--;
+            UserActions.remove(UserActions.size()-1);
+        } else {
+            m_penalties++;
+            UserActions.add("PENALTY");
+        }
+        setPenalties(m_penalties);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setPenalties(int penalties) {
+        m_penalties = penalties;
+        m_binding.penaltiesButton.setText("PENALTIES: " + m_penalties);
         m_dataViewModel.Penalties.setValue(m_penalties);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setPenalties() {
+        setPenalties(0);
+    }
+
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+    void reset() {
+        UserActions.clear();
+        UserActions.add("Block");
+        setPenalties();
+        m_dataViewModel.DefenseOn.setValue(0);
         m_dataViewModel.PlayingDefense.setValue(0);
         m_dataViewModel.LastCycle.setValue(new String[] {});
         m_dataViewModel.Cycles.setValue(new int[][] {});
-        s_Cycles.clear();
-        s_ScoringPositions.clear();
+        CyclesList.clear();
+        ScoringPositions.clear();
         for (int x = 0; x < 2; x++) {
             for (int y  = 0; y < 3; y++) {
-                s_Scoring[x][y] = 0;
-                setScoreLabel(x, y);
+                CyclesScored[x][y] = 0;
+                setScoreLabel(x,y);
             }
         }
         for (int x = 0; x < 6; x++) {
             for (int y  = 0; y < 5; y++) {
-                s_CyclesWithPositions[x][y] = 0;
+                CyclesWithPositions[x][y] = 0;
             }
         }
+    }
+
+    void updateWeakReferences(MainActivity mainActivity) {
+        m_mainWeakReference = new WeakReference<>(mainActivity);
     }
 }

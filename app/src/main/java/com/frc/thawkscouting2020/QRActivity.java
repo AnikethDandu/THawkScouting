@@ -1,6 +1,5 @@
 package com.frc.thawkscouting2020;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
@@ -11,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.frc.thawkscouting2020.databinding.ActivityQrBinding;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -18,138 +18,118 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
-public class QRActivity extends AppCompatActivity{
+public class QRActivity extends AppCompatActivity {
 
-    private DataViewModel dataViewModel;
-    private static WeakReference<MainActivity> mainActivityWeakReference;
+    // TODO: Change view binding
+    // TODO: DATA BINDING
+
+    private DataViewModel m_dataViewModel;
+    private static WeakReference<MainActivity> s_mainWeakReference;
+    private static WeakReference<TeleOpFragment> s_teleOpWeakReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr);
+        final ActivityQrBinding BINDING = ActivityQrBinding.inflate(getLayoutInflater());
+        final View VIEW = BINDING.getRoot();
+        setContentView(VIEW);
 
-        dataViewModel = MainActivity.dataViewModel;
-        dataViewModel.RotationControl.setValue(EndgameFragment.CHECKBOXES[0].isChecked());
-        dataViewModel.ColorControl.setValue(EndgameFragment.CHECKBOXES[1].isChecked());
-        dataViewModel.AttemptedClimb.setValue(EndgameFragment.CHECKBOXES[2].isChecked());
-        dataViewModel.Climb.setValue(EndgameFragment.CHECKBOXES[3].isChecked());
-        dataViewModel.Level.setValue(EndgameFragment.CHECKBOXES[4].isChecked());
-        dataViewModel.AttemptedDoubleClimb.setValue(EndgameFragment.CHECKBOXES[5].isChecked());
-        dataViewModel.DoubleClimb.setValue(EndgameFragment.CHECKBOXES[6].isChecked());
-        dataViewModel.BrownedOut.setValue(EndgameFragment.CHECKBOXES[7].isChecked());
-        dataViewModel.Disabled.setValue(EndgameFragment.CHECKBOXES[8].isChecked());
-        dataViewModel.YellowCard.setValue(EndgameFragment.CHECKBOXES[9].isChecked());
-        dataViewModel.RedCard.setValue(EndgameFragment.CHECKBOXES[10].isChecked());
-        dataViewModel.ScouterName.setValue((EndgameFragment.s_Name).equals("") ? "No Scouter Name" : EndgameFragment.s_Name);
-        dataViewModel.Notes.setValue((EndgameFragment.s_Notes).equals("") ? "No Notes" : EndgameFragment.s_Notes);
+        m_dataViewModel = s_mainWeakReference.get().dataViewModel;
 
-        /* GETS RID OF HEADER */
         try
         {
-            this.getSupportActionBar().hide();
+            Objects.requireNonNull(this.getSupportActionBar()).hide();
         }
-        catch (NullPointerException e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();;
+        catch (NullPointerException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         final DisplayMetrics DISPLAY_METRICS = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(DISPLAY_METRICS);
-        final int HEIGHT = DISPLAY_METRICS.heightPixels;
-        final int WIDTH = DISPLAY_METRICS.widthPixels;
-        getWindow().setLayout((int)(WIDTH*0.6), (int)(HEIGHT*0.6));
+        getWindow().setLayout((int)(DISPLAY_METRICS.widthPixels*0.6), (int)(DISPLAY_METRICS.heightPixels*0.6));
 
-        final Button DONE_BUTTON = findViewById(R.id.doneButton);
-        DONE_BUTTON.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        final Button DONE_BUTTON = BINDING.doneButton;
+        DONE_BUTTON.setOnClickListener((View v) -> finish());
 
-        final ImageView QR_CODE = findViewById(R.id.qrCode);
+        final ImageView QR_CODE = BINDING.qrCode;
         final MultiFormatWriter MULTI_FORMAT_WRITER = new MultiFormatWriter();
-        try {
-            /* Encode the data into a bit matrix */
-            final BitMatrix BIT_MATRIX = MULTI_FORMAT_WRITER.encode(returnDataString(), BarcodeFormat.QR_CODE, 500, 500);
-            final BarcodeEncoder BARCODE_ENCODER = new BarcodeEncoder();
-            final Bitmap BIT_MAP = BARCODE_ENCODER.createBitmap(BIT_MATRIX);
-            /* Set the QR code */
-            QR_CODE.setImageBitmap(BIT_MAP);
-        } catch (WriterException e) {
-            /* Display the error to the user as a toast */
-            Toast.makeText(QRActivity.this, e.toString(), Toast.LENGTH_LONG).show();
-        }
-        mainActivityWeakReference.get().reset();
-    }
 
-    private String convertArray(@NonNull int[] array) {
-        String finalString = "";
-        for (int i = 0; i < array.length; i++) {
-            finalString += array[i];
-            if (i != array.length-1) {
-                finalString += ",";
+        final Bitmap[] BIT_MAP = new Bitmap[1];
+        new Thread(() -> {
+            try {
+                final BitMatrix BIT_MATRIX = MULTI_FORMAT_WRITER.encode(returnDataString(), BarcodeFormat.QR_CODE, 500, 500);
+                final BarcodeEncoder BARCODE_ENCODER = new BarcodeEncoder();
+                BIT_MAP[0] = BARCODE_ENCODER.createBitmap(BIT_MATRIX);
+
+            } catch (WriterException e) {
+                Toast.makeText(QRActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             }
-        }
-        return finalString;
+            QR_CODE.post(() -> runOnUiThread(() -> QR_CODE.setImageBitmap(BIT_MAP[0])));
+        }).start();
+        s_mainWeakReference.get().reset();
     }
 
-    @NonNull
-    private String convertCycles(int[][] cycles) {
+    private String convertArrayToCSVString(int[] array) {
+        StringBuilder finalString = new StringBuilder();
+        for(int arrayItem: array) {
+            finalString.append(arrayItem).append(",");
+        }
+        finalString.delete(finalString.length()-1, finalString.length());
+        return finalString.toString();
+    }
+
+    private String convertCyclesToCSVString(int[][] cycles) {
         StringBuilder cycleString = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            for (int x = 0; x < 5; x++) {
-                cycleString.append(cycles[i][x]);
-                cycleString.append(",");
+        for (int[] position: cycles) {
+            for(int score: position) {
+                cycleString.append(score).append(",");
             }
         }
         cycleString.delete(cycleString.length()-1, cycleString.length());
         return cycleString.toString();
     }
 
-    @NonNull
     private String returnDataString() {
-        dataViewModel.Cycles.setValue(TeleOpFragment.s_CyclesWithPositions);
-        final String[] DATA = new String[]{
-                dataViewModel.Team.getValue(),
-                dataViewModel.Match.getValue(),
-                dataViewModel.Color.getValue(),
-                String.valueOf(dataViewModel.Station.getValue()),
-                String.valueOf(dataViewModel.CrossedLine.getValue()),
-                convertArray(dataViewModel.AutoHits.getValue()),
-                convertArray(dataViewModel.AutoMiss.getValue()),
-                String.valueOf(dataViewModel.PlayingDefense.getValue()),
-                String.valueOf(dataViewModel.DefenseOn.getValue()),
-                String.valueOf(dataViewModel.Penalties.getValue()),
-                convertCycles(dataViewModel.Cycles.getValue()),
-                String.valueOf(dataViewModel.RotationControl.getValue()),
-                String.valueOf(dataViewModel.ColorControl.getValue()),
-                String.valueOf(dataViewModel.AttemptedClimb.getValue()),
-                String.valueOf(dataViewModel.Climb.getValue()),
-                String.valueOf(dataViewModel.Level.getValue()),
-                String.valueOf(dataViewModel.AttemptedDoubleClimb.getValue()),
-                String.valueOf(dataViewModel.DoubleClimb.getValue()),
-                String.valueOf(dataViewModel.BrownedOut.getValue()),
-                String.valueOf(dataViewModel.Disabled.getValue()),
-                String.valueOf(dataViewModel.YellowCard.getValue()),
-                String.valueOf(dataViewModel.RedCard.getValue()),
-                String.valueOf(dataViewModel.ScouterName.getValue()),
-                String.valueOf(dataViewModel.Notes.getValue())
+        m_dataViewModel.Cycles.setValue(s_teleOpWeakReference.get().CyclesWithPositions);
+        final String[] DATA = {
+                m_dataViewModel.Team.getValue(),
+                m_dataViewModel.Match.getValue(),
+                m_dataViewModel.Color.getValue(),
+                String.valueOf(m_dataViewModel.Station.getValue()),
+                String.valueOf(m_dataViewModel.CrossedLine.getValue()),
+                convertArrayToCSVString(Objects.requireNonNull(m_dataViewModel.AutoHits.getValue())),
+                convertArrayToCSVString(Objects.requireNonNull(m_dataViewModel.AutoMiss.getValue())),
+                String.valueOf(m_dataViewModel.PlayingDefense.getValue()),
+                String.valueOf(m_dataViewModel.DefenseOn.getValue()),
+                String.valueOf(m_dataViewModel.Penalties.getValue()),
+                convertCyclesToCSVString(Objects.requireNonNull(m_dataViewModel.Cycles.getValue())),
+                String.valueOf(m_dataViewModel.RotationControl.getValue()),
+                String.valueOf(m_dataViewModel.ColorControl.getValue()),
+                String.valueOf(m_dataViewModel.AttemptedClimb.getValue()),
+                String.valueOf(m_dataViewModel.Climb.getValue()),
+                String.valueOf(m_dataViewModel.Level.getValue()),
+                String.valueOf(m_dataViewModel.AttemptedDoubleClimb.getValue()),
+                String.valueOf(m_dataViewModel.DoubleClimb.getValue()),
+                String.valueOf(m_dataViewModel.BrownedOut.getValue()),
+                String.valueOf(m_dataViewModel.Disabled.getValue()),
+                String.valueOf(m_dataViewModel.YellowCard.getValue()),
+                String.valueOf(m_dataViewModel.RedCard.getValue()),
+                String.valueOf(m_dataViewModel.ScouterName.getValue()),
+                String.valueOf(m_dataViewModel.Notes.getValue())
         };
 
-        /* Append the data to a string builder */
         final StringBuilder WORKING_TEXT = new StringBuilder();
-        for (String s : DATA) {
-            WORKING_TEXT.append(s);
-            WORKING_TEXT.append(",");
+        for (String value : DATA) {
+            WORKING_TEXT.append(value).append(",");
         }
         WORKING_TEXT.delete(WORKING_TEXT.length()-1, WORKING_TEXT.length());
-        /* Return the data as a string */
-        System.out.print(WORKING_TEXT.toString());
         return WORKING_TEXT.toString();
     }
 
-    public static void updateActivity(MainActivity activity) {
-        mainActivityWeakReference = new WeakReference<>(activity);
+    static void updateWeakReferences(MainActivity activity, TeleOpFragment teleOpFragment) {
+        s_mainWeakReference = new WeakReference<>(activity);
+        s_teleOpWeakReference = new WeakReference<>(teleOpFragment);
     }
 }

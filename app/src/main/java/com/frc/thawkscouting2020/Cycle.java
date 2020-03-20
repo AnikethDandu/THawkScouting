@@ -5,18 +5,14 @@ package com.frc.thawkscouting2020;
  *
  * @author Aniketh Dandu - Team 1100
  */
-class Cycle {
+final class Cycle {
 
-    /**
-     * Integers for power cell hits and misses
-     */
     int innerHit;
     int outerHit;
     int bottomHit;
     int highMiss;
     int lowMiss;
 
-    // Constructor for class
     Cycle(int innerHit, int outerHit, int bottomHit, int highMiss, int lowMiss) {
         this.innerHit = innerHit;
         this.outerHit = outerHit;

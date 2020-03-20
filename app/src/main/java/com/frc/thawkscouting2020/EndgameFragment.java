@@ -1,5 +1,7 @@
 package com.frc.thawkscouting2020;
 
+import com.frc.thawkscouting2020.databinding.EndgamefragmentLayoutBinding;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -9,34 +11,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.CheckBox;
+
+
+import java.lang.ref.WeakReference;
 
 /**
  * Final screen with Checkboxes for climb, control panel, disabling, and cards
  * Display the QR Code
  *
- * @author Aniketh Dandu - Team 1100
+ * @author Aniketh Dandu - FRC Team 1100
  */
 public class EndgameFragment extends Fragment {
-    /**
-     * The array of Checkboxes in the final screen
-     */
-    @NonNull
-    static CheckBox[] CHECKBOXES = new CheckBox[11];
-    /**
-     * The String value of the notes
-     */
-    static String s_Notes;
-    /**
-     * The String value of the scouter name
-     */
-    static String s_Name;
-    /**
-     * The text box for the notes
-     */
-    private EditText m_notes;
+
+    // TODO: Document code
+
+    private final CheckBox[] CHECKBOXES = new CheckBox[11];
+    private WeakReference<MainActivity> m_mainWeakReference;
+    private EndgamefragmentLayoutBinding m_binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,51 +36,74 @@ public class EndgameFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    // Method for when the view is created
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the view corresponding to the layout
-        final View VIEW =  inflater.inflate(R.layout.endgamefragment_layout, container, false);
-        // ID the Checkboxes and name text box
-        CHECKBOXES[0] = VIEW.findViewById(R.id.rotationCheckbox);
-        CHECKBOXES[1] = VIEW.findViewById(R.id.colorCheckbox);
-        CHECKBOXES[2] = VIEW.findViewById(R.id.attemptedClimb);
-        CHECKBOXES[3] = VIEW.findViewById(R.id.climbCheckBox);
-        CHECKBOXES[4] = VIEW.findViewById(R.id.levelCheckbox);
-        CHECKBOXES[5] = VIEW.findViewById(R.id.attemptedDoubleCheckbox);
-        CHECKBOXES[6] = VIEW.findViewById(R.id.doubleCheckbox);
-        CHECKBOXES[7] = VIEW.findViewById(R.id.brownedOutCheckbox);
-        CHECKBOXES[8] = VIEW.findViewById(R.id.disableCheckbox);
-        CHECKBOXES[9] = VIEW.findViewById(R.id.yellowCardCheckbox);
-        CHECKBOXES[10] = VIEW.findViewById(R.id.redCardCheckbox);
-        m_notes = VIEW.findViewById(R.id.notes);
-        final EditText NAME = VIEW.findViewById(R.id.scouterNameBox);
-        // Make the cursor for the notes text box invisible and clear the notes text box
-        m_notes.setCursorVisible(false);
-        m_notes.setText("");
+        m_binding = EndgamefragmentLayoutBinding.inflate(inflater);
 
-        // When the QR Button is clicked, set the notes and name fields and load the QR screen
-        final Button QR_BUTTON = VIEW.findViewById(R.id.qrButton);
-        QR_BUTTON.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                s_Name = NAME.getText().toString();
-                s_Notes = m_notes.getText().toString();
-                final Intent QR_INTENT = new Intent(getActivity(), QRActivity.class);
-                startActivity(QR_INTENT);
-            }
+        CHECKBOXES[0] = m_binding.rotationCheckbox;
+        CHECKBOXES[1] = m_binding.colorCheckbox;
+        CHECKBOXES[2] = m_binding.attemptedClimb;
+        CHECKBOXES[3] = m_binding.climbCheckBox;
+        CHECKBOXES[4] = m_binding.levelCheckbox;
+        CHECKBOXES[5] = m_binding.attemptedDoubleCheckbox;
+        CHECKBOXES[6] = m_binding.doubleCheckbox;
+        CHECKBOXES[7] = m_binding.brownedOutCheckbox;
+        CHECKBOXES[8] = m_binding.disableCheckbox;
+        CHECKBOXES[9] = m_binding.yellowCardCheckbox;
+        CHECKBOXES[10] = m_binding.redCardCheckbox;
+
+        m_binding.notes.setCursorVisible(false);
+        m_binding.notes.setText("");
+
+        m_binding.qrButton.setOnClickListener((View view) -> {
+            setDataViewModel();
+            final Intent QR_INTENT = new Intent(getActivity(), QRActivity.class);
+            startActivity(QR_INTENT);
         });
-        return VIEW;
+
+        m_binding.climbCheckBox.setOnClickListener((View view) -> {
+            if (m_binding.climbCheckBox.isChecked()) m_binding.attemptedClimb.setChecked(true);
+        });
+
+        m_binding.doubleCheckbox.setOnClickListener((View view) -> {
+            if (m_binding.doubleCheckbox.isChecked()) m_binding.attemptedDoubleCheckbox.setChecked(true);
+        });
+
+        return m_binding.getRoot();
     }
 
-    /**
-     * Reset the checkboxes and notes
-     */
+    private void setDataViewModel() {
+        final DataViewModel DATA_VIEW_MODEL = m_mainWeakReference.get().dataViewModel;
+        final String NAME = m_binding.scouterNameBox.getText().toString();
+        final String NOTES = m_binding.notes.getText().toString();
+        DATA_VIEW_MODEL.RotationControl.setValue(CHECKBOXES[0].isChecked());
+        DATA_VIEW_MODEL.ColorControl.setValue(CHECKBOXES[1].isChecked());
+        DATA_VIEW_MODEL.AttemptedClimb.setValue(CHECKBOXES[2].isChecked());
+        DATA_VIEW_MODEL.Climb.setValue(CHECKBOXES[3].isChecked());
+        DATA_VIEW_MODEL.Level.setValue(CHECKBOXES[4].isChecked());
+        DATA_VIEW_MODEL.AttemptedDoubleClimb.setValue(CHECKBOXES[5].isChecked());
+        DATA_VIEW_MODEL.DoubleClimb.setValue(CHECKBOXES[6].isChecked());
+        DATA_VIEW_MODEL.BrownedOut.setValue(CHECKBOXES[7].isChecked());
+        DATA_VIEW_MODEL.Disabled.setValue(CHECKBOXES[8].isChecked());
+        DATA_VIEW_MODEL.YellowCard.setValue(CHECKBOXES[9].isChecked());
+        DATA_VIEW_MODEL.RedCard.setValue(CHECKBOXES[10].isChecked());
+        DATA_VIEW_MODEL.ScouterName.setValue(NAME.equals("") ? "No Scouter Name" : NAME);
+        DATA_VIEW_MODEL.Notes.setValue(NOTES.equals("") ? "No Notes" : NOTES);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        m_binding = null;
+    }
+
     void reset() {
-        for(int i = 0; i < 11; i++) {
-            CHECKBOXES[i].setChecked(false);
-        }
-        m_notes.setText("");
+        for (CheckBox checkBox: CHECKBOXES) checkBox.setChecked(false);
+        m_binding.notes.setText("");
+    }
+
+    void updateWeakReferences(MainActivity mainActivity) {
+        m_mainWeakReference = new WeakReference<>(mainActivity);
     }
 }
