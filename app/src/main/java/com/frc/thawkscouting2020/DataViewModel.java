@@ -3,6 +3,11 @@ package com.frc.thawkscouting2020;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+/**
+ * View Model class for storing data across Activities and Fragments
+ *
+ * @author Aniketh Dandu - FRC Team 1100
+ */
 public class DataViewModel extends ViewModel {
     MutableLiveData<String>Team = new MutableLiveData<>();
     MutableLiveData<String>Match = new MutableLiveData<>();

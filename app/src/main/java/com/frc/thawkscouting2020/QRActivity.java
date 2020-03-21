@@ -4,10 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Bitmap;
 import android.view.View;
-import android.widget.Button;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.frc.thawkscouting2020.databinding.ActivityQrBinding;
@@ -20,14 +18,31 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+/**
+ * Activity that creates a QR code with all the data from previous tabs
+ *
+ * @author Aniketh Dandu - FRC Team 1100
+ */
 public class QRActivity extends AppCompatActivity {
 
-    // TODO: Change view binding
-    // TODO: DATA BINDING
+    // **************************************************
+    // private fields
+    // **************************************************
 
-    private DataViewModel m_dataViewModel;
+    /**
+     * Weak reference of Main Activity
+     */
     private static WeakReference<MainActivity> s_mainWeakReference;
+
+    /**
+     * Weak reference of Tele Op Fragment
+     */
     private static WeakReference<TeleOpFragment> s_teleOpWeakReference;
+
+    /**
+     * View Model used to store data across screens
+     */
+    private DataViewModel m_dataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +51,10 @@ public class QRActivity extends AppCompatActivity {
         final View VIEW = BINDING.getRoot();
         setContentView(VIEW);
 
-        m_dataViewModel = s_mainWeakReference.get().dataViewModel;
+        // Set the View Model
+        m_dataViewModel = s_mainWeakReference.get().DataViewModel;
 
+        // Disable the header
         try
         {
             Objects.requireNonNull(this.getSupportActionBar()).hide();
@@ -46,31 +63,46 @@ public class QRActivity extends AppCompatActivity {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
+        // Set the window size
         final DisplayMetrics DISPLAY_METRICS = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(DISPLAY_METRICS);
-        getWindow().setLayout((int)(DISPLAY_METRICS.widthPixels*0.6), (int)(DISPLAY_METRICS.heightPixels*0.6));
+        getWindow().setLayout((int)(DISPLAY_METRICS.widthPixels*0.6),
+                (int)(DISPLAY_METRICS.heightPixels*0.6));
 
-        final Button DONE_BUTTON = BINDING.doneButton;
-        DONE_BUTTON.setOnClickListener((View v) -> finish());
+        // Close the activity when the "Done" button is pressed
+        BINDING.doneButton.setOnClickListener((View v) -> finish());
 
-        final ImageView QR_CODE = BINDING.qrCode;
+        // Create a QR code on a separate thread using the data String and post it on the UI thread
         final MultiFormatWriter MULTI_FORMAT_WRITER = new MultiFormatWriter();
-
         final Bitmap[] BIT_MAP = new Bitmap[1];
         new Thread(() -> {
             try {
-                final BitMatrix BIT_MATRIX = MULTI_FORMAT_WRITER.encode(returnDataString(), BarcodeFormat.QR_CODE, 500, 500);
+                final BitMatrix BIT_MATRIX = MULTI_FORMAT_WRITER.encode(returnDataString(),
+                        BarcodeFormat.QR_CODE, 500, 500);
                 final BarcodeEncoder BARCODE_ENCODER = new BarcodeEncoder();
                 BIT_MAP[0] = BARCODE_ENCODER.createBitmap(BIT_MATRIX);
 
             } catch (WriterException e) {
                 Toast.makeText(QRActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             }
-            QR_CODE.post(() -> runOnUiThread(() -> QR_CODE.setImageBitmap(BIT_MAP[0])));
+            BINDING.qrCode.post(() -> runOnUiThread(() -> BINDING.qrCode.setImageBitmap(
+                    BIT_MAP[0])));
         }).start();
+
+        // Reset all of the screens
         s_mainWeakReference.get().reset();
     }
 
+    // **************************************************
+    // Private methods
+    // **************************************************
+
+    /**
+     * Takes an array of autonomous shots and returns a String
+     *
+     * @param array Array of integers of shots
+     * @return Returns String with the array values
+     */
     private String convertArrayToCSVString(int[] array) {
         StringBuilder finalString = new StringBuilder();
         for(int arrayItem: array) {
@@ -80,6 +112,12 @@ public class QRActivity extends AppCompatActivity {
         return finalString.toString();
     }
 
+    /**
+     * Takes a 2D array of the cycles from each position on the field and returns a String
+     *
+     * @param cycles 2D Array of integers of cycles from every position
+     * @return Returns String with 2D array values
+     */
     private String convertCyclesToCSVString(int[][] cycles) {
         StringBuilder cycleString = new StringBuilder();
         for (int[] position: cycles) {
@@ -91,6 +129,11 @@ public class QRActivity extends AppCompatActivity {
         return cycleString.toString();
     }
 
+    /**
+     * Takes all the values from all 3 screens and returns them in a String format
+     *
+     * @return Returns String with all values
+     */
     private String returnDataString() {
         m_dataViewModel.Cycles.setValue(s_teleOpWeakReference.get().CyclesWithPositions);
         final String[] DATA = {
@@ -99,8 +142,10 @@ public class QRActivity extends AppCompatActivity {
                 m_dataViewModel.Color.getValue(),
                 String.valueOf(m_dataViewModel.Station.getValue()),
                 String.valueOf(m_dataViewModel.CrossedLine.getValue()),
-                convertArrayToCSVString(Objects.requireNonNull(m_dataViewModel.AutoHits.getValue())),
-                convertArrayToCSVString(Objects.requireNonNull(m_dataViewModel.AutoMiss.getValue())),
+                convertArrayToCSVString(Objects.requireNonNull(
+                        m_dataViewModel.AutoHits.getValue())),
+                convertArrayToCSVString(Objects.requireNonNull(
+                        m_dataViewModel.AutoMiss.getValue())),
                 String.valueOf(m_dataViewModel.PlayingDefense.getValue()),
                 String.valueOf(m_dataViewModel.DefenseOn.getValue()),
                 String.valueOf(m_dataViewModel.Penalties.getValue()),
@@ -128,8 +173,18 @@ public class QRActivity extends AppCompatActivity {
         return WORKING_TEXT.toString();
     }
 
-    static void updateWeakReferences(MainActivity activity, TeleOpFragment teleOpFragment) {
-        s_mainWeakReference = new WeakReference<>(activity);
+    // **************************************************
+    // Static methods
+    // **************************************************
+
+    /**
+     * Gets weak references to the Main Activity and Tele-Op Fragment
+     *
+     * @param mainActivity MainActivity
+     * @param teleOpFragment TeleOpFragment
+     */
+    static void updateWeakReferences(MainActivity mainActivity, TeleOpFragment teleOpFragment) {
+        s_mainWeakReference = new WeakReference<>(mainActivity);
         s_teleOpWeakReference = new WeakReference<>(teleOpFragment);
     }
 }

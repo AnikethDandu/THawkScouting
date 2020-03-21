@@ -15,15 +15,42 @@ import androidx.lifecycle.*;
 
 import com.frc.thawkscouting2020.ui.main.SectionsPagerAdapter;
 
+/**
+ * Main Activity used to set weak references and Fragment references
+ *
+ * @author Aniketh Dandu - FRC Team 1100
+ */
 public class MainActivity extends AppCompatActivity {
 
-    // TODO: Clean up code
-    // TODO: Make Data View Model PACKAGE-PRIVATE
-    DataViewModel dataViewModel;
+    // **************************************************
+    // Package-private fields
+    // **************************************************
+
+    /**
+     * The View Model used to store data across the Fragments and Activities
+     */
+    DataViewModel DataViewModel;
+
+    // **************************************************
+    // Private fields
+    // **************************************************
+
+    /**
+     * The Autonomous Fragment
+     */
     private AutoFragment m_autoFragment;
+
+    /**
+     * The Tele-Op Fragment
+     */
     private TeleOpFragment m_teleopFragment;
+
+    /**
+     * The Endgame Fragment
+     */
     private EndgameFragment m_endgameFragment;
 
+    // Creates the View Model and changes the field image depending on the Alliance color
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +63,12 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabs = BINDING.tabs;
         tabs.setupWithViewPager(VIEW_PAGER);
 
-        dataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
+        DataViewModel = new ViewModelProvider(this).get(DataViewModel.class);
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(@NonNull TabLayout.Tab tab) {
-                if (tab.getPosition() == 1) {
+                if (tab.getPosition() == 1)
                     m_teleopFragment.changeBackgroundImage(m_autoFragment.Color);
-                }
             }
 
             @Override
@@ -57,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Updates the weak references when each Fragment is assigned to the Main Activity
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -78,14 +105,20 @@ public class MainActivity extends AppCompatActivity {
                 m_endgameFragment.updateWeakReferences(MainActivity.this);
                 break;
         }
-
         QRActivity.updateWeakReferences(MainActivity.this, m_teleopFragment);
         CycleActivity.updateWeakReference(MainActivity.this, m_teleopFragment);
     }
 
+    // **************************************************
+    // Public methods
+    // **************************************************
+
+    /**
+     * Resets all values and texts of 3 tabs
+     */
     public void reset() {
-        m_autoFragment.reset();
-        m_teleopFragment.reset();
-        m_endgameFragment.reset();
+        m_autoFragment.resetScreen();
+        m_teleopFragment.resetScreen();
+        m_endgameFragment.resetScreen();
     }
 }

@@ -1,23 +1,23 @@
 package com.frc.thawkscouting2020;
 
 /**
- * Class that holds data for each cycle
+ * Class that holds shots for each cycle
  *
- * @author Aniketh Dandu - Team 1100
+ * @author Aniketh Dandu - FRC Team 1100
  */
 final class Cycle {
 
-    int innerHit;
-    int outerHit;
-    int bottomHit;
-    int highMiss;
-    int lowMiss;
+    int InnerHit;
+    int OuterHit;
+    int BottomHit;
+    int HighMiss;
+    int LowMiss;
 
     Cycle(int innerHit, int outerHit, int bottomHit, int highMiss, int lowMiss) {
-        this.innerHit = innerHit;
-        this.outerHit = outerHit;
-        this.bottomHit = bottomHit;
-        this.highMiss = highMiss;
-        this.lowMiss = lowMiss;
+        this.InnerHit = innerHit;
+        this.OuterHit = outerHit;
+        this.BottomHit = bottomHit;
+        this.HighMiss = highMiss;
+        this.LowMiss = lowMiss;
     }
 }

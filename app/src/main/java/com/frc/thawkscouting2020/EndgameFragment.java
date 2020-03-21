@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-
 import java.lang.ref.WeakReference;
 
 /**
@@ -24,12 +23,26 @@ import java.lang.ref.WeakReference;
  */
 public class EndgameFragment extends Fragment {
 
-    // TODO: Document code
+    // **************************************************
+    // Private fields
+    // **************************************************
 
+    /**
+     * Array of checkboxes present in the Fragment
+     */
     private final CheckBox[] CHECKBOXES = new CheckBox[11];
+
+    /**
+     * Weak reference to the Main Activity
+     */
     private WeakReference<MainActivity> m_mainWeakReference;
+
+    /**
+     * Layout binding object
+     */
     private EndgamefragmentLayoutBinding m_binding;
 
+    // Retains the instance so the screen does not reset when the orientation changes
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +51,12 @@ public class EndgameFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        // Updates the layout binding value and inflates the layout
         m_binding = EndgamefragmentLayoutBinding.inflate(inflater);
 
+        // Updates the checkbox array
         CHECKBOXES[0] = m_binding.rotationCheckbox;
         CHECKBOXES[1] = m_binding.colorCheckbox;
         CHECKBOXES[2] = m_binding.attemptedClimb;
@@ -53,28 +69,69 @@ public class EndgameFragment extends Fragment {
         CHECKBOXES[9] = m_binding.yellowCardCheckbox;
         CHECKBOXES[10] = m_binding.redCardCheckbox;
 
+        // Makes the notes text cursor invisible and clears the text
         m_binding.notes.setCursorVisible(false);
         m_binding.notes.setText("");
 
+        // Starts the QR activity when the "QR" button is clicked
         m_binding.qrButton.setOnClickListener((View view) -> {
             setDataViewModel();
             final Intent QR_INTENT = new Intent(getActivity(), QRActivity.class);
             startActivity(QR_INTENT);
         });
 
+        // Checks the attempted climb checkbox when the climb checkbox is checked
         m_binding.climbCheckBox.setOnClickListener((View view) -> {
             if (m_binding.climbCheckBox.isChecked()) m_binding.attemptedClimb.setChecked(true);
         });
 
+        // Checks the attempted double climb checkbox when the double climb checkbox is checked
         m_binding.doubleCheckbox.setOnClickListener((View view) -> {
-            if (m_binding.doubleCheckbox.isChecked()) m_binding.attemptedDoubleCheckbox.setChecked(true);
+            if (m_binding.doubleCheckbox.isChecked())
+                m_binding.attemptedDoubleCheckbox.setChecked(true);
         });
 
+        // Return the view
         return m_binding.getRoot();
     }
 
+    // Assigns the biding to null when the Fragment is destroyed
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        m_binding = null;
+    }
+
+    // **************************************************
+    // Package-private methods
+    // **************************************************
+
+    /**
+     * Resets the current Fragment values and labels
+     */
+    void resetScreen() {
+        for (CheckBox checkBox: CHECKBOXES) checkBox.setChecked(false);
+        m_binding.notes.setText("");
+    }
+
+    /**
+     * Updates the weak reference to the Main Activity
+     *
+     * @param mainActivity Main Activity
+     */
+    void updateWeakReferences(MainActivity mainActivity) {
+        m_mainWeakReference = new WeakReference<>(mainActivity);
+    }
+
+    // **************************************************
+    // Private methods
+    // **************************************************
+
+    /**
+     * Sets the values in the View Model
+     */
     private void setDataViewModel() {
-        final DataViewModel DATA_VIEW_MODEL = m_mainWeakReference.get().dataViewModel;
+        final DataViewModel DATA_VIEW_MODEL = m_mainWeakReference.get().DataViewModel;
         final String NAME = m_binding.scouterNameBox.getText().toString();
         final String NOTES = m_binding.notes.getText().toString();
         DATA_VIEW_MODEL.RotationControl.setValue(CHECKBOXES[0].isChecked());
@@ -90,20 +147,5 @@ public class EndgameFragment extends Fragment {
         DATA_VIEW_MODEL.RedCard.setValue(CHECKBOXES[10].isChecked());
         DATA_VIEW_MODEL.ScouterName.setValue(NAME.equals("") ? "No Scouter Name" : NAME);
         DATA_VIEW_MODEL.Notes.setValue(NOTES.equals("") ? "No Notes" : NOTES);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        m_binding = null;
-    }
-
-    void reset() {
-        for (CheckBox checkBox: CHECKBOXES) checkBox.setChecked(false);
-        m_binding.notes.setText("");
-    }
-
-    void updateWeakReferences(MainActivity mainActivity) {
-        m_mainWeakReference = new WeakReference<>(mainActivity);
     }
 }

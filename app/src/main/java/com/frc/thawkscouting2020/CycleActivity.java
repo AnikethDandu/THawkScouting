@@ -21,29 +21,59 @@ import java.util.Objects;
  */
 public class CycleActivity extends AppCompatActivity {
 
-    // TODO: Clean up code
+    // **************************************************
+    // Private fields
+    // **************************************************
 
-    private ArrayList<String> m_userActions = new ArrayList<String>() {
-        {
-            add("Block");
-        }
-    };
+    /**
+     * The list of user actions
+     */
+    private ArrayList<String> m_userActions = new ArrayList<String>() {};
+
+    /**
+     * Array of integers for shots scored
+     */
     private final int[] CYCLE_HIT = {0, 0, 0};
+
+    /**
+     * Array of integers for shots missed
+     */
     private final int[] CYCLE_MISS = {0, 0};
+
+    /**
+     * View Model used to store data cross Fragments and Activities
+     */
     private DataViewModel dataViewModel;
+
+    /**
+     * A weak reference to the Main Activity
+     */
     private static WeakReference<MainActivity> s_mainWeakReference;
+
+    /**
+     * A weak reference to the Tele Op Fragment
+     */
     private static WeakReference<TeleOpFragment> s_teleWeakReference;
+
+    /**
+     * The layout binding for the Activity
+     */
     private ActivityCycleBinding m_binding;
 
     @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Assigns the bind and view
         m_binding = ActivityCycleBinding.inflate(getLayoutInflater());
         setContentView(m_binding.getRoot());
 
-        dataViewModel = s_mainWeakReference.get().dataViewModel;
+        // Adds a buffer to the user actions
+        m_userActions.add("Block");
+        // Assigns the Main Activity weak reference
+        dataViewModel = s_mainWeakReference.get().DataViewModel;
 
+        // Disables the header
         try
         {
             Objects.requireNonNull(this.getSupportActionBar()).hide();
@@ -51,14 +81,18 @@ public class CycleActivity extends AppCompatActivity {
         catch (NullPointerException e){
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+        // Sets the default labels
         setButtonLabels();
 
+        // Increments the shot values and button labels
         m_binding.cycleInnerButton.setOnClickListener((View view) -> addShot(0, true));
         m_binding.cycleOuterButton.setOnClickListener((View view) -> addShot(1, true));
         m_binding.cycleBottomButton.setOnClickListener((View view) -> addShot(2, true));
         m_binding.cycleHighButton.setOnClickListener((View view) -> addShot(0, false));
         m_binding.cycleLowerButton.setOnClickListener((View view) -> addShot(1, false));
 
+        // Saves the values in the cycles and sets the labels in the Tele-Op Fragment
+        // Does not allow the user to save the cycle if no shots are scored
         m_binding.acceptButton.setOnClickListener((View view) -> {
             final int SHOTS = CYCLE_HIT[0] + CYCLE_HIT[1] + CYCLE_HIT[2] + CYCLE_MISS[0] + CYCLE_MISS[1];
             if (SHOTS > 0) {
@@ -66,13 +100,12 @@ public class CycleActivity extends AppCompatActivity {
                     Cycle currentCycle = new Cycle(CYCLE_HIT[0], CYCLE_HIT[1], CYCLE_HIT[2], CYCLE_MISS[0], CYCLE_MISS[1]);
                     s_teleWeakReference.get().CyclesList.add(currentCycle);
                     final String[] CYCLE = {
-                            String.valueOf(currentCycle.innerHit),
-                            String.valueOf(currentCycle.outerHit),
-                            String.valueOf(currentCycle.bottomHit),
-                            String.valueOf(currentCycle.highMiss),
-                            String.valueOf(currentCycle.lowMiss)
+                            String.valueOf(currentCycle.InnerHit),
+                            String.valueOf(currentCycle.OuterHit),
+                            String.valueOf(currentCycle.BottomHit),
+                            String.valueOf(currentCycle.HighMiss),
+                            String.valueOf(currentCycle.LowMiss)
                     };
-                    m_binding.acceptButton.post(() -> runOnUiThread(() -> dataViewModel.LastCycle.setValue(CYCLE)));
                     final int X = s_teleWeakReference.get().SelectedBox[0];
                     final int Y = s_teleWeakReference.get().SelectedBox[1];
                     for (int  i = 0; i < 5; i++) {
@@ -81,7 +114,10 @@ public class CycleActivity extends AppCompatActivity {
                     s_teleWeakReference.get().CyclesScored[X][Y]++;
                     s_teleWeakReference.get().ScoringPositions.add(new int [] {X, Y});
                     s_teleWeakReference.get().UserActions.add("CYCLE");
-                    m_binding.acceptButton.post(() -> runOnUiThread(() -> s_teleWeakReference.get().setScoreLabel(X, Y)));
+                    m_binding.acceptButton.post(() -> runOnUiThread(() -> {
+                        s_teleWeakReference.get().setCycleLabels(X, Y);
+                        dataViewModel.LastCycle.setValue(CYCLE);
+                    }));
                 }).start();
                 finish();
             } else {
@@ -89,17 +125,40 @@ public class CycleActivity extends AppCompatActivity {
             }
         });
 
+        // Close the activity when the "Finish" button is pressed
         m_binding.CanelButton.setOnClickListener((View view) -> finish());
+        // Undo the last action when the "Undo" button is pressed
         m_binding.cycleUndoButton.setOnClickListener((View view) -> undoAction());
 
+        // Sets the window size
         final DisplayMetrics DISPLAY_METRICS = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(DISPLAY_METRICS);
-        final int HEIGHT = DISPLAY_METRICS.heightPixels;
-        final int WIDTH = DISPLAY_METRICS.widthPixels;
-
-        getWindow().setLayout((int)(WIDTH*0.75), (int)(HEIGHT*0.7125));
+        getWindow().setLayout((int)(DISPLAY_METRICS.heightPixels*0.75),
+                (int)(DISPLAY_METRICS.widthPixels*0.7125));
     }
 
+    // **************************************************
+    // Static methods
+    // **************************************************
+
+    /**
+     * Updates the weak references
+     *
+     * @param mainActivity Main Activity
+     * @param teleOpFragment Tele Op Fragment
+     */
+    static void updateWeakReference(MainActivity mainActivity, TeleOpFragment teleOpFragment) {
+        s_mainWeakReference = new WeakReference<>(mainActivity);
+        s_teleWeakReference = new WeakReference<>(teleOpFragment);
+    }
+
+    // **************************************************
+    // Private methods
+    // **************************************************
+
+    /**
+     * Sets the labels on all of the score buttons
+     */
     @SuppressLint("SetTextI18n")
     private void setButtonLabels() {
         m_binding.cycleInnerButton.setText("Inner: " + CYCLE_HIT[0]);
@@ -109,6 +168,10 @@ public class CycleActivity extends AppCompatActivity {
         m_binding.cycleLowerButton.setText("Low: " + CYCLE_MISS[1]);
     }
 
+    /**
+     * Removes the last action preformed by the user
+     * Decrements the value, resets button labels, and removes the last action in the list
+     */
     private void undoAction() {
         final String LAST_ACTION = m_userActions.get(m_userActions.size()-1);
         final String ACTION = LAST_ACTION.substring(0, 3);
@@ -124,6 +187,12 @@ public class CycleActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Increments the shot value, sets the labels on the buttons, and adds an action to the list
+     *
+     * @param index The index of the shot attempted
+     * @param scored Boolean representing whether or not the shot was scored or not
+     */
     private void addShot(int index, boolean scored) {
         if (scored) {
             CYCLE_HIT[index]++;
@@ -132,10 +201,5 @@ public class CycleActivity extends AppCompatActivity {
         }
         m_userActions.add(((scored) ? "hit" : "miss") + index);
         setButtonLabels();
-    }
-
-    static void updateWeakReference(MainActivity mainActivity, TeleOpFragment teleOpFragment) {
-        s_mainWeakReference = new WeakReference<>(mainActivity);
-        s_teleWeakReference = new WeakReference<>(teleOpFragment);
     }
 }
