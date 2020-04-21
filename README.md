@@ -1,5 +1,5 @@
 # THawkScouting
-The T-Hawk Master Scouting app is a native Android app that works in conjunction with the T-Hawk Scouting app to track the preformance 
+The T-Hawk Scouting app is a native Android app that works in conjunction with the T-Hawk Scouting app to track the preformance 
 of FRC (FIRST robotics competition) robots during a match. This app tracks all three stages of an FRC game: Autonomous, Tele-Op, and Endgame. The app tracks power cell shots, penalties, control panel scores, climbs, autonomous setups, defense, and notes. The app does not require any extra setup further than installation and can be used without a secure Internet connection.
 
 ## Installation
